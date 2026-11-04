@@ -1,0 +1,14 @@
+﻿node_modules/
+hockey/dist/
+hockey/.env*
+!hockey/.env.example
+hockey/test-results/
+originals/
+
+volleyball/dist/
+volleyball/.env*
+!volleyball/.env.example
+volleyball/test-results/
+
+/dist/
+/test-results/

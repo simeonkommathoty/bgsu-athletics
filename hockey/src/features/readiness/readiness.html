@@ -1,0 +1,44 @@
+<div class="content page active" id="page-readiness">
+    <!-- BANNER HEADER -->
+    <div style="background:var(--brown);border-radius:var(--r3);padding:14px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div style="font-family:var(--fh);font-size:24px;font-weight:900;color:var(--orange);letter-spacing:1px;">BGSU HOCKEY READINESS HUB</div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <label style="font-size:10px;color:var(--tan);font-family:var(--fm);letter-spacing:1px;display:flex;align-items:center;gap:6px;">
+          DATE
+          <select id="readiness-date" data-onchange="renderReadiness()" title="Dates with force plate (VALD) data, newest first" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 8px;color:var(--text);font-family:var(--fm);font-size:11px;outline:none;color-scheme:dark;min-width:170px;cursor:pointer;"></select>
+        </label>
+        <button data-onclick="exportReadinessPdf()" class="btn" style="padding:6px 12px;font-size:10px;" title="Opens the print dialog — choose Save as PDF">⇩ EXPORT PDF</button>
+        <button data-onclick="openImport()" class="btn btn-or" style="padding:6px 12px;font-size:10px;">↑ IMPORT SESSION</button>
+      </div>
+    </div>
+
+    <!-- TEAM READINESS SCORE (daily rollup of the Individual Macro View flags) -->
+    <div id="team-readiness-score" style="margin-bottom:16px;"></div>
+
+    <!-- NEW JUMP HEIGHT PRs on the selected date -->
+    <div id="readiness-pr-banner" style="margin-bottom:16px;"></div>
+
+    <!-- TEAM-LEVEL TOP STRIP (30-day) -->
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:10px;margin-bottom:16px;overflow-x:auto;" id="readiness-team-strip"></div>
+
+    <!-- INDIVIDUAL MACRO VIEW -->
+    <div class="card">
+      <div class="card-header">
+        <div class="ctitle"><div class="cdot"></div>Individual Macro View</div>
+        <div style="display:flex;gap:10px;font-size:10px;font-family:var(--fm);color:var(--text3);">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:rgba(74,222,128,0.25);border-radius:2px;"></span>Better than avg</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:rgba(250,204,21,0.35);border-radius:2px;"></span>🏆 New PR</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:rgba(252,211,77,0.25);border-radius:2px;"></span>Below avg</span>
+        </div>
+      </div>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table id="readiness-table" style="min-width:900px;border-collapse:collapse;font-size:11px;font-family:var(--fm);">
+          <thead id="readiness-thead"></thead>
+          <tbody id="readiness-tbody"></tbody>
+        </table>
+      </div>
+      <div id="readiness-empty" style="display:none;padding:40px;text-align:center;color:var(--text3);font-family:var(--fm);font-size:12px;">
+        No session data yet. Import a VALD ForceDecks CSV with a Test Date column to populate this view.
+      </div>
+    </div>
+  </div>

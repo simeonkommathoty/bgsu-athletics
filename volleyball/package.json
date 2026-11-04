@@ -1,0 +1,25 @@
+{
+  "name": "bgsu-volleyball",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node tests/browser-check.js",
+    "test:demo": "node tests/demo-check.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.49.1",
+    "acorn": "8.15.0",
+    "chart.js": "4.4.1"
+  },
+  "devDependencies": {
+    "eslint-scope": "8.4.0",
+    "parse5": "7.3.0",
+    "playwright-core": "1.56.1",
+    "vite": "6.4.1"
+  }
+}

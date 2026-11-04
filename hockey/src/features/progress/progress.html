@@ -1,0 +1,38 @@
+<div class="content page active" id="page-progress">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Long-Term Progress Tracking</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;">Official testing only · best August/September result each year (10-yd sprint: September only)</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <select id="prog-athlete-sel" data-onchange="renderProgressChart()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:6px 12px;color:var(--text);font-family:var(--fm);font-size:11px;"></select>
+        <select id="prog-metric-sel" data-onchange="renderProgressChart()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:6px 12px;color:var(--text);font-family:var(--fm);font-size:11px;">
+          <option value="approachJump">Broad Jump</option>
+          <option value="cmjHeight">Vertical Jump</option>
+          <option value="standVert">Goal to Blue</option>
+          <option value="sprint10">10-yd Sprint</option>
+          <option value="frontSquatMax">Front Squat</option>
+          <option value="ngChinUp">NG Chin Up</option>
+          <option value="onIceBeep">On-Ice Beep</option>
+          <option value="benchMax">Bench Press</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header"><div class="ctitle"><div class="cdot"></div><span id="prog-chart-title">Progress Over Time</span></div></div>
+      <div class="cw" style="height:320px;"><canvas id="prog-chart"></canvas></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Test-by-Test History</div></div>
+        <div class="tw"><table><thead><tr><th>Date</th><th>Value</th><th>Change</th></tr></thead><tbody id="prog-history-tbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Team Progress — Latest Test Block</div></div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:10px;" id="prog-team-sub">Change from previous test to most recent, this metric</div>
+        <div class="tw"><table><thead><tr><th>Athlete</th><th>Previous</th><th>Latest</th><th>Change</th></tr></thead><tbody id="prog-team-tbody"></tbody></table></div>
+      </div>
+    </div>
+  </div>

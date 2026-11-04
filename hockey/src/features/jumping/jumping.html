@@ -1,0 +1,32 @@
+<div class="content page active" id="page-jumping">
+    <div class="stripe"></div>
+    <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Power Testing Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(300px,1fr));gap:14px;overflow-x:auto;margin-bottom:14px;">
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Broad Jump — Top 10</div></div>
+        <div class="tw"><table><thead><tr><th>#</th><th>Athlete</th><th style="min-width:40px;">Pos</th><th style="min-width:60px;">Broad Jmp</th><th style="min-width:72px;">Tier</th></tr></thead><tbody id="appr-lb"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Vertical Jump — Top 10</div></div>
+        <div class="tw"><table><thead><tr><th>#</th><th>Athlete</th><th style="min-width:40px;">Pos</th><th style="min-width:60px;">Vert (in)</th><th style="min-width:72px;">Tier</th></tr></thead><tbody id="cmj-lb"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Goal to Blue — Top 10</div></div>
+        <div class="tw"><table><thead><tr><th>#</th><th>Athlete</th><th style="min-width:40px;">Pos</th><th style="min-width:60px;">Time (s)</th><th style="min-width:72px;">Tier</th></tr></thead><tbody id="vert-lb"></tbody></table></div>
+      </div>
+    </div>
+    <div class="grid2 mb5">
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Broad Jump vs Vertical Jump Correlation</div></div>
+        <div class="cw" style="height:260px;"><canvas id="jump-scatter" role="img" aria-label="Scatter plot of broad jump vs vertical jump">Scatter plot showing relationship between broad jump and vertical jump.</canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>10-yd Sprint — Team Rankings</div></div>
+        <div class="cw" style="height:260px;"><canvas id="sprint-bar" role="img" aria-label="Horizontal bar chart of 10-yard sprint times">10-yard sprint rankings (lower is better).</canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="ctitle"><div class="cdot"></div>Power Testing Breakdown by Position</div></div>
+      <div class="cw" style="height:220px;"><canvas id="pos-jump-radar" role="img" aria-label="Grouped bar chart of jump metrics by position">Average jump metrics grouped by position.</canvas></div>
+    </div>
+  </div>

@@ -1,0 +1,85 @@
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-mark">
+        <svg viewBox="0 0 32 32" fill="none">
+          <text x="16" y="23" font-family="Barlow Condensed" font-weight="900" font-size="20" fill="#FE5000" text-anchor="middle">BG</text>
+          <path d="M4 24 Q10 19 16 21 Q22 19 28 24" stroke="#FE5000" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <path d="M7 16 L16 12 L25 16 L16 19Z" fill="#FE5000" opacity="0.12"/>
+        </svg>
+      </div>
+      <div><div class="sb-bgsu">BGSU</div><div class="sb-sub">Bowling Green State</div></div>
+    </div>
+    <div class="sb-sport">HOCKEY S&amp;C ANALYTICS</div>
+  </div>
+  <nav class="nav" id="feature-nav" aria-label="Hockey features"></nav>
+  <div class="sb-footer">
+    <a href="../" class="sports-home" id="shell-sports-home" title="Back to the BGSU Athletics sport selection" style="display:inline-flex;align-items:center;gap:6px;color:var(--tan);font-family:var(--fm);font-size:11px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;margin-bottom:8px;"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8 8 2.5 14 8"/><path d="M3.5 7v6.5h3.2V10h2.6v3.5h3.2V7"/></svg>Sports Home</a>
+    <div class="season-tag">2026–27 SEASON</div>
+    <div class="mac-tag">NCAA D-I · MID-AMERICAN CONF.</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">Team Dashboard</div>
+    <div class="tb-right">
+      <div class="search-wrap">
+        <div class="search-box">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="4"/><path d="M11 11L15 15"/></svg>
+          <input type="text" id="gsearch" placeholder="Search athletes..." data-oninput="gsearchFn(this.value)">
+        </div>
+        <div class="search-drop" id="sdrop"></div>
+      </div>
+      <button class="btn" data-onclick="openImport()">↑ IMPORT DATA</button>
+      <button class="btn btn-or" data-onclick="doExport()">↓ EXPORT CSV</button>
+      <div id="sync-indicator" style="display:flex;align-items:center;gap:6px;padding:6px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:10px;font-family:var(--fm);color:var(--text3);letter-spacing:0.5px;">
+        <div id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background 0.2s;"></div>
+        <span id="sync-text">OFFLINE</span>
+      </div>
+      <button class="btn" data-onclick="doSignOut()" title="Sign out" id="signout-btn">⎋</button>
+    </div>
+  </div>
+
+  <div id="feature-errors" role="status" aria-live="polite"></div><main id="feature-content"></main>
+  
+
+  <!-- ═══════════════════════════════ PROFILE ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ JUMP TESTING ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ FORCE PLATE ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ WORKLOAD ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ READINESS HUB ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ LEADERBOARD ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ POSITION ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ COMPARE ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ PROGRESS TRACKING ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ AUDIT LOG ═══════════════════════════════ -->
+  
+
+  <!-- ═══════════════════════════════ ROSTER SETUP ═══════════════════════════════ -->
+  
+
+</div><!-- /main -->
+</div>

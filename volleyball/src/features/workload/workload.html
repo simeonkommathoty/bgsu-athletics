@@ -1,0 +1,99 @@
+<div class="content page active" id="page-workload">
+    <div class="stripe"></div>
+    <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Workload Monitoring — Kinexon</div>
+
+    <!-- TEAM KPI STRIP -->
+    <div id="wl-kpis" style="display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:10px;margin-bottom:16px;overflow-x:auto;"></div>
+
+    <!-- EXTERNAL WORKLOAD TRACKER -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header" style="flex-wrap:wrap;gap:10px;">
+        <div class="ctitle"><div class="cdot"></div>External Workload Tracker</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <select id="wl-date-sel" data-onchange="renderWLBoard()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+            <option value="">Loading sessions...</option>
+          </select>
+          <select id="wl-sort" data-onchange="renderWLBoard()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+            <option value="jumpVol">Sort: Total Jumps</option>
+            <option value="jumpsHigh">Sort: High Jumps (≥0.98ft)</option>
+            <option value="jumpsMid">Sort: Mid Jumps (0.66–0.98ft)</option>
+            <option value="accelLoad">Sort: Accel Load</option>
+            <option value="accelLoadPerMin">Sort: Accel Load / Min</option>
+            <option value="duration">Sort: Duration</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--fm);">
+          <thead><tr style="background:var(--orange);color:#fff;">
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">#</th>
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">Athlete</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Pos</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Duration</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Total Jumps</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Jumps/Min</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;" title="0 - 0.66 ft">Low (0–0.66ft)</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;" title="0.66 - 0.98 ft">Mid (0.66–0.98ft)</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;" title="≥ 0.98 ft">High (≥0.98ft)</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Accel Load</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Accel Load/Min</th>
+          </tr></thead>
+          <tbody id="wl-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7-DAY TREND VIEW -->
+    <div class="card">
+      <div class="card-header" style="flex-wrap:wrap;gap:10px;">
+        <div class="ctitle"><div class="cdot"></div>7-Day Trend</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:10px;color:var(--tan);font-family:var(--fm);letter-spacing:0.5px;display:flex;align-items:center;gap:6px;">
+            END DATE
+            <input type="date" id="wl-date" data-onchange="renderWLHistory()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 8px;color:var(--text);font-family:var(--fm);font-size:11px;outline:none;color-scheme:dark;">
+          </label>
+          <label style="font-size:10px;color:var(--tan);font-family:var(--fm);letter-spacing:0.5px;display:flex;align-items:center;gap:6px;">
+            ATHLETE
+            <select id="wl-athlete-sel" data-onchange="wlSelectAthlete()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+              <option value="">Team average</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="grid2" style="gap:14px;margin-top:4px;">
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-accel-title">ACCEL LOAD</div>
+          <div class="cw" style="height:180px;"><canvas id="wl-accel-chart"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-jump-title">JUMP VOLUME — <span style="color:#4ADE80;">■ HIGH (≥0.98ft)</span> <span style="color:#60A5FA;margin-left:6px;">■ MID</span> <span style="color:var(--text3);margin-left:6px;">■ LOW</span></div>
+          <div class="cw" style="height:180px;"><canvas id="wl-jump-chart"></canvas></div>
+        </div>
+      </div>
+      <!-- 14-DAY DURATION TRACKER -->
+      <div style="margin-top:14px;">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-dur-title">AVG SESSION DURATION / ATHLETE — 14 DAYS</div>
+        <div class="cw" style="height:150px;"><canvas id="wl-dur-chart"></canvas></div>
+      </div>
+
+      <!-- 14-DAY SESSION CALENDAR -->
+      <div style="margin-top:20px;">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="ctitle"><div class="cdot"></div>14-Day Session Calendar</div>
+          <div id="wl-cal-label" style="font-size:10px;font-family:var(--fm);color:var(--text3);">Team averages · click athlete row to filter</div>
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
+          <span style="font-size:9px;font-family:var(--fm);color:var(--text3);display:flex;align-items:center;gap:8px;">
+            <span style="background:rgba(74,222,128,0.75);border-radius:3px;padding:2px 6px;color:#fff;">LOW</span>
+            <span style="background:rgba(252,211,77,0.75);border-radius:3px;padding:2px 6px;color:#1a0a00;">MED</span>
+            <span style="background:rgba(248,113,113,0.75);border-radius:3px;padding:2px 6px;color:#fff;">HIGH</span>
+            <span style="margin-left:4px;">High Jumps: &lt;60 / 60–100 / &gt;100</span>
+            <span style="margin-left:8px;">Accel Load: &lt;400 / 400–550 / &gt;550</span>
+            <span style="margin-left:8px;">Duration: &lt;60 / 60–120 / &gt;120 min</span>
+          </span>
+        </div>
+        <div id="wl-calendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,2 @@
+/* Athlete Comparison: this stylesheet lives inside the feature's ShadowRoot. */
+:host { display: block; min-width: 0; }

@@ -1,0 +1,20 @@
+<div id="login-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+  <a href="../" class="sports-home" id="login-sports-home" title="Back to the BGSU Athletics sport selection" style="position:absolute;top:14px;left:16px;display:inline-flex;align-items:center;gap:6px;color:var(--tan);font-family:var(--fm);font-size:11px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8 8 2.5 14 8"/><path d="M3.5 7v6.5h3.2V10h2.6v3.5h3.2V7"/></svg>Sports Home</a>
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:36px 40px;max-width:420px;width:90%;text-align:center;">
+    <div style="margin-bottom:22px;">
+      <div style="font-family:var(--fh);font-size:36px;font-weight:900;color:var(--orange);letter-spacing:1px;line-height:1;">BGSU</div>
+      <div style="font-size:10px;color:var(--tan);font-family:var(--fb);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;">Bowling Green State</div>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--fm);margin-top:14px;letter-spacing:1px;">VOLLEYBALL S&amp;C ANALYTICS</div>
+    </div>
+    <div style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:18px;">Coach Sign-In</div>
+    <input type="email" id="login-email" placeholder="Email address" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 14px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;margin-bottom:10px;box-sizing:border-box;">
+    <input type="password" id="login-password" placeholder="Password" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 14px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;margin-bottom:14px;box-sizing:border-box;" data-onkeydown="if(event.key==='Enter')doLogin()">
+    <button data-onclick="doLogin()" id="login-btn" style="width:100%;background:var(--orange);border:none;border-radius:var(--r);padding:11px;color:#fff;font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">SIGN IN</button>
+    <div id="login-msg" style="margin-top:14px;font-size:11px;font-family:var(--fm);min-height:14px;"></div>
+    <button data-onclick="enterDemo()" id="demo-btn" type="button" title="Open the full dashboard with synthetic data. No sign-in, no network." style="width:100%;margin-top:4px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);padding:9px;color:var(--tan);font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">Explore Demo <span style="font-family:var(--fm);font-size:9px;opacity:.7;">(synthetic data)</span></button>
+    <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.6;">
+      Need an account? Contact your S&amp;C department head to be added.<br>
+      Data is encrypted and stored on Supabase cloud.
+    </div>
+  </div>
+</div>

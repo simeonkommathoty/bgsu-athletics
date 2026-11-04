@@ -1,0 +1,84 @@
+<div class="content page active" id="page-dashboard">
+    <div class="stripe"></div>
+    <div class="kpi-strip" style="grid-template-columns:repeat(7,1fr);">
+      <div class="kpi-card"><div class="kpi-lbl">Roster Size</div><div class="kpi-val wh" id="kpi-n">—</div><div class="kpi-sub">active athletes</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Broad Jump</div><div class="kpi-val" id="kpi-appr">—</div><div class="kpi-sub">standing broad jump</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Vertical Jump</div><div class="kpi-val" id="kpi-cmj">—</div><div class="kpi-sub">power testing</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Goal to Blue</div><div class="kpi-val" id="kpi-vert">—</div><div class="kpi-sub">seconds</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Peak Power</div><div class="kpi-val" id="kpi-pp">—</div><div class="kpi-sub">Watts · VALD</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Elite Tier</div><div class="kpi-val" id="kpi-elite">—</div><div class="kpi-sub" id="kpi-elite-pct"></div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Top Jumper</div><div class="kpi-val wh" style="font-size:16px;padding-top:2px;" id="kpi-top">—</div><div class="kpi-sub" id="kpi-top-pos"></div></div>
+    </div>
+
+    <div class="grid21 mb5">
+      <div class="card">
+        <div class="card-header">
+          <div class="ctitle"><div class="cdot"></div>Athlete KPI Summary</div>
+          <select id="kpi-sort" data-onchange="renderKpiTable()">
+            <option value="composite">Composite Score</option>
+            <option value="approachJump">Broad Jump</option>
+            <option value="cmjHeight">Vertical Jump</option>
+            <option value="standVert">Goal to Blue (s)</option>
+            <option value="sprint10">10-yd Sprint (s)</option>
+            <option value="frontSquatMax">Front Squat (1RM)</option>
+            <option value="ngChinUp">NG Chin Up (1RM)</option>
+            <option value="onIceBeep">On-Ice Beep</option>
+            <option value="benchMax">Bench Press (1RM)</option>
+            <option value="hangCleanMax">Hang Clean (1RM)</option>
+            <option value="peakPower">Peak Power (W)</option>
+            <option value="eccRFD">Eccentric RFD</option>
+            <option value="concImpulse">Concentric Impulse</option>
+            <option value="eccImpulse">Eccentric Impulse</option>
+            <option value="contractionTime">Contraction Time</option>
+            <option value="takeoffVelocity">Takeoff Velocity</option>
+            <option value="eccBrakingAsym">Ecc Braking Asym %</option>
+          </select>
+        </div>
+        <!-- Composite score breakdown -->
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 0 10px;border-bottom:1px solid var(--border);margin-bottom:10px;">
+          <span style="font-size:9px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;white-space:nowrap;">COMPOSITE INCLUDES:</span>
+          <span style="font-size:9px;font-family:var(--fm);background:rgba(254,80,0,0.12);color:var(--orange);padding:2px 7px;border-radius:3px;white-space:nowrap;">Jump · Broad Jump, Vertical Jump</span>
+          <span style="font-size:9px;font-family:var(--fm);background:rgba(167,139,250,0.12);color:#a78bfa;padding:2px 7px;border-radius:3px;white-space:nowrap;">Speed · 10-yd Sprint, Goal to Blue (skaters only)</span>
+          <span style="font-size:9px;font-family:var(--fm);background:rgba(96,165,250,0.12);color:#60A5FA;padding:2px 7px;border-radius:3px;white-space:nowrap;">Force Plate · CMJ Peak Power</span>
+          <span style="font-size:9px;font-family:var(--fm);background:rgba(52,211,153,0.12);color:#34D399;padding:2px 7px;border-radius:3px;white-space:nowrap;">Strength/Testing · Front Squat, NG Chin Up, Bench Press, On-Ice Beep</span>
+          <span style="font-size:9px;color:var(--text3);font-family:var(--fm);font-style:italic;">· graded vs fixed standards (team-wide) · Elite 80+ · Advanced 63–79 · Proficient 45–62 · missing metrics skipped</span>
+        </div>
+        <div class="tw"><table><thead><tr>
+          <th>#</th><th>Athlete</th><th>Pos</th>
+          <th class="sort" data-onclick="sortKpi('approachJump')">Broad Jmp</th>
+          <th class="sort" data-onclick="sortKpi('cmjHeight')">Vert (in)</th>
+          <th class="sort" data-onclick="sortKpi('standVert')">Goal-Blue</th>
+          <th class="sort" data-onclick="sortKpi('peakPower')">Pk Pwr</th>
+          <th class="sort" data-onclick="sortKpi('sprint10')">10-yd</th>
+          <th class="sort" data-onclick="sortKpi('onIceBeep')">On-Ice Beep</th>
+          <th class="sort" data-onclick="sortKpi('composite')">Score</th>
+          <th>Tier</th>
+        </tr></thead><tbody id="kpi-tbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Tier Distribution</div></div>
+        <div class="cw" style="height:185px;"><canvas id="tier-donut" role="img" aria-label="Tier distribution donut chart">Tier distribution across Elite, Advanced, Proficient, Developing.</canvas></div>
+        <div id="tier-legend" style="display:flex;flex-direction:column;gap:6px;margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="grid2 mb5">
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Team Performance Radar</div></div>
+        <div class="cw" style="height:250px;"><canvas id="team-radar" role="img" aria-label="Team radar of hockey performance pillars">Team radar showing averages across 6 hockey performance pillars.</canvas></div>
+        <div id="team-radar-legend" style="display:flex;flex-wrap:wrap;gap:4px 10px;padding:8px 4px 2px;justify-content:center;"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="ctitle"><div class="cdot"></div>Jump Comparison — All Athletes</div></div>
+        <div class="cw" style="height:250px;"><canvas id="jump-compare-bar" role="img" aria-label="Approach vs CMJ vs Standing vertical bar chart for all athletes">Approach, CMJ, and standing vertical comparison.</canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="ctitle"><div class="cdot"></div>Testing Block Trend</div>
+        <div id="trend-legend" style="display:flex;gap:12px;"></div>
+      </div>
+      <div class="cw" style="height:190px;"><canvas id="trend-line" role="img" aria-label="Season testing block trend">Composite and CMJ trend across testing blocks.</canvas></div>
+    </div>
+  </div>

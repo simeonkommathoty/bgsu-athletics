@@ -1,0 +1,105 @@
+// GitHub Pages simulation: serves dist/ under /bgsu-athletics/ exactly like a static host
+// (no SPA fallback, directory index, 301 for missing trailing slash) and drives the portal
+// and both synthetic Demo Modes through every sidebar feature. Uses no credentials.
+// Usage: node tests/pages-check.js   (BGSU_BROWSER=path to Chrome; BASE=/other/ to change)
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import {chromium} from 'playwright-core';
+
+const root=path.resolve(import.meta.dirname,'..','dist');
+const BASE=(process.env.BASE||'/bgsu-athletics/').replace(/\/?$/,'/');
+const PORT=Number(process.env.PORT||5172),ORIGIN=`http://127.0.0.1:${PORT}`;
+const TYPES={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.map':'application/json'};
+const SPORTS=[{id:'hockey',features:12},{id:'volleyball',features:11}];
+const BACKEND=/\.supabase\.(co|in)|\/rest\/v1|\/auth\/v1|\/storage\/v1|\/realtime\/v1/i;
+
+const server=http.createServer((req,res)=>{
+  const url=new URL(req.url,ORIGIN);
+  if(url.pathname==='/bgsu-athletics'&&BASE==='/bgsu-athletics/'){res.writeHead(301,{location:BASE});return res.end();}
+  if(!url.pathname.startsWith(BASE)){res.writeHead(404);return res.end('outside base');}
+  let file=path.join(root,decodeURIComponent(url.pathname.slice(BASE.length)));
+  if(!file.startsWith(root)){res.writeHead(403);return res.end();}
+  if(fs.existsSync(file)&&fs.statSync(file).isDirectory()){
+    if(!url.pathname.endsWith('/')){res.writeHead(301,{location:url.pathname+'/'+url.search});return res.end();}
+    file=path.join(file,'index.html');
+  }
+  if(!fs.existsSync(file)){res.writeHead(404);return res.end('not found');}
+  res.writeHead(200,{'content-type':TYPES[path.extname(file)]||'application/octet-stream'});
+  fs.createReadStream(file).pipe(res);
+});
+await new Promise(r=>server.listen(PORT,'127.0.0.1',r));
+let browser;
+try{
+  assert.ok(fs.existsSync(path.join(root,'index.html')),'run `npm run build` first');
+  browser=await chromium.launch({executablePath:process.env.BGSU_BROWSER||'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--no-sandbox']});
+  const context=await browser.newContext({viewport:{width:1440,height:1000}});
+  const all=[],external=[],failed=[],errors=[],sockets=[];
+  await context.route('**/*',route=>{
+    const u=new URL(route.request().url());all.push(u.href);
+    if(u.hostname==='127.0.0.1'||u.protocol==='data:'||u.protocol==='blob:')return route.continue();
+    external.push(u.href);return route.abort();
+  });
+  const page=await context.newPage();
+  page.on('pageerror',e=>errors.push(e.message));
+  page.on('websocket',w=>sockets.push(w.url()));
+  page.on('response',r=>{if(r.status()>=400)failed.push(r.status()+' '+r.url());});
+  page.on('console',m=>{if(m.type()==='error'&&!/ERR_FAILED|fonts\./.test(m.text())&&!/status of 404/.test(m.text()))errors.push('console: '+m.text());});
+  const text=()=>page.evaluate(()=>{const r=document.querySelector('[data-feature-root]')?.shadowRoot;return r?.querySelector('[id^="page-"]')?.innerText.replace(/\s+/g,' ')||'';});
+
+  // Portal: both cards, correct deployed links.
+  await page.goto(ORIGIN+BASE);
+  await page.waitForSelector('a[href="hockey/"]');await page.waitForSelector('a[href="volleyball/"]');
+  assert.equal(await page.locator('a[href="hockey/"]').evaluate(a=>a.href),ORIGIN+BASE+'hockey/');
+  console.log('PASS portal cards under',BASE);
+  // Without the trailing slash the host redirects, as GitHub Pages does.
+  await page.goto(ORIGIN+BASE+'hockey');assert.equal(new URL(page.url()).pathname,BASE+'hockey/');
+
+  for(const sport of SPORTS){
+    // Portal card -> sport login, then Explore Demo.
+    await page.goto(ORIGIN+BASE);
+    await page.locator(`a[href="${sport.id}/"]`).click();
+    await page.waitForSelector('#demo-btn',{state:'visible'});
+    assert.equal(new URL(page.url()).pathname,`${BASE}${sport.id}/`);
+    await page.locator('#demo-btn').click();
+    await page.waitForFunction(()=>document.getElementById('demo-banner'),null,{timeout:20000});
+    assert.equal(new URL(page.url()).hash,'#demo');
+    // Direct deep link + refresh keep demo.
+    await page.goto(`${ORIGIN}${BASE}${sport.id}/#demo`);await page.reload();
+    await page.waitForFunction(()=>document.getElementById('demo-banner'),null,{timeout:20000});
+    await page.waitForFunction(()=>/Demo (Forward|Defense|Goalie|Setter|Outside|Middle|Libero|Opposite|Hitter|Athlete)/i.test(document.querySelector('[data-feature-root]')?.shadowRoot?.textContent||''),null,{timeout:20000});
+    const ids=await page.locator('#feature-nav [data-feature]').evaluateAll(n=>n.map(x=>x.dataset.feature));
+    assert.equal(ids.length,sport.features,`${sport.id} feature count`);
+    let charts=0;
+    for(const id of ids){
+      await page.locator(`#feature-nav [data-feature="${id}"]`).click();
+      await page.waitForFunction(i=>document.querySelector('#feature-nav .active')?.dataset.feature===i&&document.querySelector('[data-feature-root]')?.shadowRoot?.querySelector('[id^="page-"]'),id,{timeout:15000});
+      await page.waitForTimeout(400);
+      assert.equal(await page.locator('#feature-errors').innerText(),'',`${sport.id}/${id} reported an error`);
+      const t=await text();
+      assert.ok(t.length>60,`${sport.id}/${id} rendered`);
+      assert.doesNotMatch(t,/NaN|undefined|\[object|Infinity/,`${sport.id}/${id} invalid values`);
+      assert.ok(await page.locator('#demo-banner').count(),`${sport.id}/${id} still in demo`);
+      charts+=await page.evaluate(()=>[...document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('canvas')].filter(c=>c.width>0&&c.height>0).length);
+    }
+    assert.ok(charts>0,`${sport.id} charts render`);
+    // Back/Forward and Sports Home from inside the demo.
+    await page.locator('#feature-nav [data-feature="roster"]').click();
+    await page.goBack().catch(()=>{});
+    await page.goto(`${ORIGIN}${BASE}${sport.id}/#demo`);
+    await page.waitForFunction(()=>document.getElementById('demo-banner'),null,{timeout:20000});
+    await page.locator('#shell-sports-home').click();
+    await page.waitForSelector('a[href="hockey/"]');
+    assert.equal(new URL(page.url()).pathname,BASE);
+    console.log(`PASS ${sport.id} demo under ${BASE} (${ids.length}/${sport.features} features, ${charts} chart canvases)`);
+  }
+
+  assert.deepEqual(all.filter(u=>BACKEND.test(u)),[],'no Supabase request');
+  assert.deepEqual(sockets.filter(u=>!u.startsWith('ws://127.0.0.1')),[],'no remote websocket');
+  assert.deepEqual(external.filter(u=>!/fonts\.(googleapis|gstatic)\.com/.test(u)),[],'only fonts requested externally');
+  assert.deepEqual(failed,[],'no 4xx/5xx asset responses');
+  assert.deepEqual(errors,[],'no page or console errors');
+  console.log(`PASS no Supabase traffic, no failed assets, no console errors (${all.length} requests)`);
+}finally{await browser?.close();server.close();}
+process.exit(0);

@@ -1,0 +1,10 @@
+/* Athlete Profile: this stylesheet lives inside the feature's ShadowRoot. */
+:host { display: block; min-width: 0; }
+
+/* PROFILE */
+.prof-hero{background:linear-gradient(130deg,var(--bg3) 0%,var(--bg2) 55%,rgba(79,44,29,0.25) 100%);border:1px solid var(--border2);border-radius:var(--r3);padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
+.prof-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:var(--orange);opacity:0.025;border-radius:50%;}
+.prof-kpis{display:grid;grid-template-columns:repeat(8,1fr);gap:9px;}
+.pkpi{text-align:center;background:var(--bg4);border-radius:var(--r);padding:10px 6px;border:1px solid var(--border);}
+.pkv{font-family:var(--fh);font-size:18px;font-weight:800;letter-spacing:-0.3px;line-height:1;}
+.pkl{font-size:8.5px;color:var(--text3);font-family:var(--fm);margin-top:3px;letter-spacing:0.5px;}

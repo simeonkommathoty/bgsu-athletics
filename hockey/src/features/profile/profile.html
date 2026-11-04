@@ -1,0 +1,36 @@
+<div class="content page active" id="page-profile">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Athlete Profile</div>
+      <div style="margin-left:auto;"><select id="profile-sel" data-onchange="renderProfile()" style="min-width:210px;"></select></div>
+    </div>
+    <div id="prof-hero"></div>
+    <div class="grid2 mb4">
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>S&amp;C Radar vs Team Avg</div>
+        <div class="cw" style="height:255px;"><canvas id="p-radar" role="img" aria-label="Player radar vs team average">Player radar profile vs team average.</canvas></div>
+        <div id="p-radar-legend"></div>
+      </div>
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>Season Score Progression</div>
+        <div class="cw" style="height:255px;"><canvas id="p-trend" role="img" aria-label="Player season score progression">Player composite score across testing blocks.</canvas></div>
+      </div>
+    </div>
+    <div class="grid2 mb4">
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>Jump Profile</div>
+        <div class="cw" style="height:200px;"><canvas id="p-jump-bar" role="img" aria-label="Player jump type comparison bar chart">Player broad jump, vertical jump, and goal-to-blue comparison.</canvas></div>
+      </div>
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>Force Plate Details (VALD)</div>
+        <div id="p-fp-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:9px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>All Metrics Breakdown</div>
+      <div id="p-metrics" style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;"></div>
+    </div>
+    <div class="card" id="p-sources-card" style="display:none;">
+      <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>Data Sources</div>
+      <div id="p-sources"></div>
+    </div>
+  </div>

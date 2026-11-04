@@ -1,0 +1,104 @@
+<div class="content page active" id="page-workload">
+    <div class="stripe"></div>
+    <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">Workload Monitoring — Firstbeat HR</div>
+
+    <!-- TEAM KPI STRIP -->
+    <div id="wl-kpis" style="display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:10px;margin-bottom:16px;overflow-x:auto;"></div>
+
+    <!-- FIRSTBEAT SESSIONS BOARD -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header" style="flex-wrap:wrap;gap:10px;">
+        <div class="ctitle"><div class="cdot"></div>Firstbeat Training Sessions</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <select id="wl-date-sel" data-onchange="renderWLBoard()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+            <option value="">Loading sessions...</option>
+          </select>
+          <select id="wl-sort" data-onchange="renderWLBoard()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+            <option value="jumpVol">Sort: TRIMP Total</option>
+            <option value="avgHR">Sort: Avg HR</option>
+            <option value="efficScore">Sort: Efficiency</option>
+            <option value="duration">Sort: Duration</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--fm);">
+          <thead><tr style="background:var(--orange);color:#fff;">
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">#</th>
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">Athlete</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Pos</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Session Type</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">TRIMP Total</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">TRIMP/min</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Avg HR</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Efficiency</th>
+          </tr></thead>
+          <tbody id="wl-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7-DAY TREND VIEW -->
+    <div class="card">
+      <div class="card-header" style="flex-wrap:wrap;gap:10px;">
+        <div class="ctitle"><div class="cdot"></div>7-Day Trend</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:10px;color:var(--tan);font-family:var(--fm);letter-spacing:0.5px;display:flex;align-items:center;gap:6px;">
+            END DATE
+            <input type="date" id="wl-date" data-onchange="renderWLHistory()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 8px;color:var(--text);font-family:var(--fm);font-size:11px;outline:none;color-scheme:dark;">
+          </label>
+          <label style="font-size:10px;color:var(--tan);font-family:var(--fm);letter-spacing:0.5px;display:flex;align-items:center;gap:6px;">
+            ATHLETE
+            <select id="wl-athlete-sel" data-onchange="wlSelectAthlete()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+              <option value="">Team average</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="grid2" style="gap:14px;margin-top:4px;">
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-accel-title">TRIMP LOAD</div>
+          <div class="cw" style="height:180px;"><canvas id="wl-accel-chart"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-jump-title">AVG HR (BPM)</div>
+          <div class="cw" style="height:180px;"><canvas id="wl-jump-chart"></canvas></div>
+        </div>
+      </div>
+      <!-- 14-DAY DURATION TRACKER -->
+      <div style="margin-top:14px;">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:0.5px;margin-bottom:6px;" id="wl-dur-title">AVG SESSION DURATION / ATHLETE — 14 DAYS</div>
+        <div class="cw" style="height:150px;"><canvas id="wl-dur-chart"></canvas></div>
+      </div>
+
+      <!-- 14-DAY SESSION CALENDAR -->
+      <div style="margin-top:20px;">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="ctitle"><div class="cdot"></div>14-Day Session Calendar</div>
+          <div id="wl-cal-label" style="font-size:10px;font-family:var(--fm);color:var(--text3);">Team averages · click athlete row to filter</div>
+        </div>
+        <!-- Legend -->
+        <div style="display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
+          <span style="font-size:9px;font-family:var(--fm);color:var(--text3);display:flex;align-items:center;gap:8px;">
+            <span style="background:rgba(74,222,128,0.75);border-radius:3px;padding:2px 6px;color:#fff;">LOW</span>
+            <span style="background:rgba(252,211,77,0.75);border-radius:3px;padding:2px 6px;color:#1a0a00;">MED</span>
+            <span style="background:rgba(248,113,113,0.75);border-radius:3px;padding:2px 6px;color:#fff;">HIGH</span>
+            <span style="margin-left:4px;">TRIMP: &lt;100 / 100–160 / &gt;160</span>
+            <span style="margin-left:8px;">Avg HR: &lt;140 / 140–165 / &gt;165</span>
+            <span style="margin-left:8px;">Duration: &lt;60 / 60–120 / &gt;120 min</span>
+          </span>
+        </div>
+        <div id="wl-calendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+      </div>
+
+      <!-- PER-DRILL TRIMP BREAKDOWN -->
+      <div style="margin-top:20px;">
+        <div class="card-header" style="margin-bottom:4px;">
+          <div class="ctitle"><div class="cdot"></div>Drill Breakdown</div>
+          <div id="wl-drill-label" style="font-size:10px;font-family:var(--fm);color:var(--text3);">Select an athlete above, then a date, to see TRIMP by drill</div>
+        </div>
+        <div class="cw" style="height:220px;"><canvas id="wl-drill-chart"></canvas></div>
+        <div id="wl-drill-table" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>

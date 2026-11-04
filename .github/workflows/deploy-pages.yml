@@ -1,0 +1,94 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            hockey/package-lock.json
+            volleyball/package-lock.json
+
+      - name: Install dependencies (lockfiles)
+        run: npm run install:all
+
+      - name: Unit tests
+        run: |
+          npm test
+          npm test --prefix hockey
+          npm test --prefix volleyball
+
+      # Supabase values are optional repository VARIABLES (not secrets): VITE_ values are
+      # public in the built JS. Without them the site is a demo-only build.
+      # VITE_HOCKEY_NICKNAME_ALIASES / VITE_HOCKEY_FORMER_PLAYERS contain athlete names and
+      # are deliberately NOT passed to this public build.
+      - name: Write per-sport build environment
+        env:
+          HOCKEY_SUPABASE_URL: ${{ vars.HOCKEY_SUPABASE_URL }}
+          HOCKEY_SUPABASE_ANON_KEY: ${{ vars.HOCKEY_SUPABASE_ANON_KEY }}
+          VOLLEYBALL_SUPABASE_URL: ${{ vars.VOLLEYBALL_SUPABASE_URL }}
+          VOLLEYBALL_SUPABASE_ANON_KEY: ${{ vars.VOLLEYBALL_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -n "$HOCKEY_SUPABASE_URL" ] && [ -n "$HOCKEY_SUPABASE_ANON_KEY" ]; then
+            printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\n' "$HOCKEY_SUPABASE_URL" "$HOCKEY_SUPABASE_ANON_KEY" > hockey/.env.production
+          else
+            echo "::notice::Hockey Supabase variables not set - Hockey builds demo-only."
+          fi
+          if [ -n "$VOLLEYBALL_SUPABASE_URL" ] && [ -n "$VOLLEYBALL_SUPABASE_ANON_KEY" ]; then
+            printf 'VITE_SUPABASE_URL=%s\nVITE_SUPABASE_ANON_KEY=%s\n' "$VOLLEYBALL_SUPABASE_URL" "$VOLLEYBALL_SUPABASE_ANON_KEY" > volleyball/.env.production
+          else
+            echo "::notice::Volleyball Supabase variables not set - Volleyball builds demo-only."
+          fi
+
+      - name: Build portal, Hockey and Volleyball
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          for f in dist/index.html dist/assets dist/hockey/index.html dist/hockey/assets dist/volleyball/index.html dist/volleyball/assets; do
+            test -e "$f" || { echo "::error::missing $f"; exit 1; }
+          done
+          if grep -rIlE 'service_role|sb_secret_' dist; then echo "::error::secret-like string in build"; exit 1; fi
+          touch dist/.nojekyll
+
+      - name: Browser check under /bgsu-athletics/ (Demo Mode, all features)
+        env:
+          BGSU_BROWSER: /usr/bin/google-chrome
+        run: node tests/pages-check.js
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

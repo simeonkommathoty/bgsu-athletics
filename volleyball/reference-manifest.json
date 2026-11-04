@@ -1,0 +1,718 @@
+{
+  "referenceSha256": "3d0f5e2bb14e277116ac4665d231545c1c1aced6c8200b3bd89ed14f3e81a0b0",
+  "modules": {
+    "services/scoring/composite": {
+      "symbols": [
+        "POSITIONS",
+        "POS_FULL",
+        "TIERS",
+        "TIER_CLASS_MAP",
+        "TIER_COLORS",
+        "TEST_BLOCKS",
+        "NORMS",
+        "ALL_METRICS",
+        "rnd",
+        "rndf",
+        "avCls",
+        "NAMES",
+        "APPROACH_JUMP_FRESHNESS_MONTHS",
+        "isApproachJumpFresh",
+        "refreshApproachJumpFreshness",
+        "calcCompositeVB",
+        "calcACWR",
+        "calcTier",
+        "acwrZone"
+      ],
+      "dependencies": [
+        "inToFtIn",
+        "ATHLETES"
+      ]
+    },
+    "services/data/roster": {
+      "symbols": [
+        "ATHLETES",
+        "posIsSet",
+        "unsetCount",
+        "postImportPositionCheck",
+        "ACTIVE_WINDOW_DAYS",
+        "isAthleteActive",
+        "allAthletes",
+        "archivedAthletes",
+        "rosterAthletes",
+        "athleteOptions",
+        "refreshAll"
+      ],
+      "dependencies": [
+        "updateRosterBadge",
+        "toast",
+        "SESSIONS",
+        "normName",
+        "dedupeATHLETES",
+        "refreshApproachJumpFreshness",
+        "CH",
+        "kc",
+        "sb",
+        "currentUser",
+        "_cloudDataLoaded",
+        "queueSaveAll"
+      ]
+    },
+    "services/data/charts": {
+      "symbols": [
+        "CH",
+        "kc"
+      ],
+      "dependencies": []
+    },
+    "services/data/presentation": {
+      "symbols": [
+        "tierBadge",
+        "inchesToFeet",
+        "posPill",
+        "ava",
+        "spark",
+        "getM",
+        "METRIC_DATE_KEY",
+        "FP_SESSION_METRICS",
+        "metricDate",
+        "fmtDate",
+        "pctile",
+        "inToFtIn"
+      ],
+      "dependencies": [
+        "TIER_CLASS_MAP",
+        "ALL_METRICS",
+        "sourceForKey"
+      ]
+    },
+    "services/data/interactions": {
+      "symbols": [
+        "gsearchFn",
+        "openAth",
+        "clearMetric",
+        "updateRosterBadge"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "ava",
+        "tierBadge",
+        "renderProfile",
+        "ATHLETES",
+        "sb",
+        "currentUser",
+        "DB_FIELDS",
+        "toast",
+        "refreshAll",
+        "unsetCount"
+      ]
+    },
+    "services/export/csv": {
+      "symbols": [
+        "doExport"
+      ],
+      "dependencies": [
+        "rosterAthletes"
+      ]
+    },
+    "features/roster/roster": {
+      "symbols": [
+        "rosterDraft",
+        "rosterFilter",
+        "POS_UNSET_SENTINEL",
+        "setRosterFilter",
+        "initRoster",
+        "renderRosterGrid",
+        "archiveAthlete",
+        "restoreAthlete",
+        "mergeSourceId",
+        "openMergeModal",
+        "closeMergeModal",
+        "renderMergePreview",
+        "doMergeAthletes",
+        "draftName",
+        "draftPosition",
+        "saveAllPositions"
+      ],
+      "dependencies": [
+        "updateRosterBadge",
+        "archivedAthletes",
+        "ava",
+        "allAthletes",
+        "posIsSet",
+        "isAthleteActive",
+        "unsetCount",
+        "rosterAthletes",
+        "POSITIONS",
+        "ATHLETES",
+        "sb",
+        "currentUser",
+        "toast",
+        "refreshAll",
+        "nameSimilarity",
+        "loadAllSessions",
+        "calcCompositeVB",
+        "calcTier"
+      ]
+    },
+    "features/dashboard/dashboard": {
+      "symbols": [
+        "initDash",
+        "kpiSortKey",
+        "sortKpi",
+        "renderKpiTable",
+        "renderTierDonut",
+        "renderTeamRadar",
+        "renderJumpCompareBar",
+        "renderTrendLine",
+        "KPI_SORT_KEYS",
+        "populateKpiSort"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "inchesToFeet",
+        "getM",
+        "ava",
+        "posPill",
+        "tierBadge",
+        "kc",
+        "TIERS",
+        "CH",
+        "groupRadarFiltered",
+        "RADAR_OPTIONS",
+        "VB_RADAR_LEGEND_HTML",
+        "TEST_BLOCKS",
+        "populateMetricSelect"
+      ]
+    },
+    "services/scoring/radar": {
+      "symbols": [
+        "VB_RADAR",
+        "radarNorm",
+        "athleteRadarDataFiltered",
+        "athleteRadarData",
+        "groupRadarFiltered",
+        "groupRadarData",
+        "RADAR_LABELS",
+        "VB_RADAR_LEGEND_HTML",
+        "RADAR_OPTIONS"
+      ],
+      "dependencies": [
+        "NORMS",
+        "getM"
+      ]
+    },
+    "features/profile/profile": {
+      "symbols": [
+        "renderProfileRadar",
+        "initProfile",
+        "renderProfile"
+      ],
+      "dependencies": [
+        "kc",
+        "athleteRadarData",
+        "groupRadarData",
+        "rosterAthletes",
+        "CH",
+        "RADAR_LABELS",
+        "RADAR_OPTIONS",
+        "VB_RADAR_LEGEND_HTML",
+        "athleteOptions",
+        "ATHLETES",
+        "ava",
+        "posPill",
+        "tierBadge",
+        "POS_FULL",
+        "spark",
+        "inchesToFeet",
+        "TEST_BLOCKS",
+        "ALL_METRICS",
+        "pctile",
+        "sourceForKey"
+      ]
+    },
+    "features/position/position": {
+      "symbols": [
+        "renderPositionRadar",
+        "activePos",
+        "initPos",
+        "setPosTab",
+        "renderPosBoard"
+      ],
+      "dependencies": [
+        "kc",
+        "groupRadarFiltered",
+        "rosterAthletes",
+        "CH",
+        "RADAR_OPTIONS",
+        "VB_RADAR_LEGEND_HTML",
+        "POSITIONS",
+        "POS_FULL",
+        "TIERS",
+        "TIER_CLASS_MAP",
+        "ava",
+        "spark",
+        "getM"
+      ]
+    },
+    "features/compare/compare": {
+      "symbols": [
+        "renderCompareRadar",
+        "initCmp",
+        "renderCompare"
+      ],
+      "dependencies": [
+        "kc",
+        "CH",
+        "RADAR_LABELS",
+        "athleteRadarData",
+        "RADAR_OPTIONS",
+        "VB_RADAR_LEGEND_HTML",
+        "athleteOptions",
+        "ATHLETES",
+        "ava",
+        "posPill",
+        "tierBadge",
+        "ALL_METRICS"
+      ]
+    },
+    "features/jumping/jumping": {
+      "symbols": [
+        "initJumping"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "ava",
+        "posPill",
+        "tierBadge",
+        "inchesToFeet",
+        "APPROACH_JUMP_FRESHNESS_MONTHS",
+        "kc",
+        "CH",
+        "POSITIONS"
+      ]
+    },
+    "services/scoring/outliers": {
+      "symbols": [
+        "FP_METRIC_KEYS",
+        "FP_HARD_RANGES",
+        "OUTLIER_PCT_THRESHOLD",
+        "MIN_SESSIONS_FOR_ROLLING",
+        "isOutlier",
+        "cleanValue"
+      ],
+      "dependencies": [
+        "SESSIONS",
+        "normName"
+      ]
+    },
+    "services/data/session-values": {
+      "symbols": [
+        "athletesWithLatestSession"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "SESSIONS",
+        "normName",
+        "isOutlier"
+      ]
+    },
+    "services/data/metric-select": {
+      "symbols": [
+        "metricHasData",
+        "populateMetricSelect"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "getM"
+      ]
+    },
+    "features/forceplate/forceplate": {
+      "symbols": [
+        "FP_SORT_KEYS",
+        "populateFPSort",
+        "initFP",
+        "renderCMJScatter",
+        "renderPRTracker",
+        "renderFPBoard"
+      ],
+      "dependencies": [
+        "populateMetricSelect",
+        "athletesWithLatestSession",
+        "kc",
+        "CH",
+        "POSITIONS",
+        "SESSIONS",
+        "isValdSession",
+        "normName",
+        "rosterAthletes",
+        "ATHLETES",
+        "fmtDate",
+        "ava",
+        "posPill",
+        "getM",
+        "tierBadge"
+      ]
+    },
+    "features/workload/workload": {
+      "symbols": [
+        "WL_SORT_KEYS",
+        "populateWLSort",
+        "wlFocusAthlete",
+        "initWL",
+        "renderWLKpis",
+        "renderWLBoard",
+        "wlSelectAthlete",
+        "wlFocusRow",
+        "renderWLHistory",
+        "renderWLCalendar"
+      ],
+      "dependencies": [
+        "populateMetricSelect",
+        "loadAllSessions",
+        "SESSIONS",
+        "getKinexonSessions",
+        "fmtDate",
+        "rosterAthletes",
+        "normName",
+        "ava",
+        "posPill",
+        "kc",
+        "ATHLETES",
+        "CH"
+      ]
+    },
+    "services/data/workload": {
+      "symbols": [
+        "getKinexonSessions",
+        "getKinexonSessionForAthlete"
+      ],
+      "dependencies": [
+        "SESSIONS",
+        "normName"
+      ]
+    },
+    "features/leaderboard/leaderboard": {
+      "symbols": [
+        "activeM",
+        "initLB",
+        "setM",
+        "renderLB"
+      ],
+      "dependencies": [
+        "rosterAthletes",
+        "ALL_METRICS",
+        "metricHasData",
+        "getM",
+        "kc",
+        "metricDate",
+        "ava",
+        "posPill",
+        "tierBadge",
+        "CH"
+      ]
+    },
+    "services/import/import": {
+      "symbols": [
+        "importSrc",
+        "pasteSrc2",
+        "parsedData",
+        "kinexonCommitLock",
+        "kinexonCollisionDetected",
+        "manEditId",
+        "SRC_INFO",
+        "COL_ALIASES",
+        "findSprintPlaceholders",
+        "openSprintAudit",
+        "closeSprintAudit",
+        "clearSprintPlaceholders",
+        "commitSmartMatch",
+        "applyAndClose",
+        "addUnmatched",
+        "openImport",
+        "closeImport",
+        "switchITab",
+        "setSrc",
+        "setPSrc",
+        "updateSrcInfo",
+        "handleFileSelect",
+        "readFile",
+        "setDZState",
+        "initDropZone",
+        "parseCSV",
+        "extractDateFromTitle",
+        "processSessionRows",
+        "processApproachVertRows",
+        "processKinexonRows",
+        "processKinexonTeamSummaryRows",
+        "processKinexonSummaryRows",
+        "processRows",
+        "TB_EX_MAP",
+        "TB_LOWER_IS_BETTER",
+        "processTB",
+        "processTBComparison",
+        "processTBLegacy",
+        "showMappingPreview",
+        "showDataPreview",
+        "showMsg",
+        "fmtAccel",
+        "mergeKinexonSessions",
+        "warnKinexonCollisions",
+        "warnRosterAthletesMissingFromFile",
+        "smartMergeInto",
+        "commitCSV",
+        "commitPaste",
+        "parsePaste",
+        "resetCSVUI",
+        "loadForEdit",
+        "clearManual",
+        "submitManual",
+        "deleteAthlete",
+        "dedupeATHLETES"
+      ],
+      "dependencies": [
+        "allAthletes",
+        "sourceForKey",
+        "calcCompositeVB",
+        "calcTier",
+        "queueSave",
+        "refreshAll",
+        "toast",
+        "findBestMatch",
+        "mergeAthleteRecords",
+        "ATHLETES",
+        "postImportPositionCheck",
+        "unsetCount",
+        "rosterAthletes",
+        "normName",
+        "athleteOptions",
+        "inchesToFeet",
+        "POSITIONS",
+        "NORMS",
+        "avCls",
+        "calcACWR",
+        "TEST_BLOCKS",
+        "rnd",
+        "sb",
+        "currentUser",
+        "fmtDate",
+        "logSource",
+        "setSyncStatus",
+        "saveTestSessions",
+        "loadAllSessions",
+        "getM"
+      ]
+    },
+    "services/data/identity": {
+      "symbols": [
+        "logSource",
+        "sourceForKey",
+        "mergeAthleteRecords",
+        "normName",
+        "firstName",
+        "lastName",
+        "nameSimilarity",
+        "NICKNAME_ALIASES",
+        "resolveNickname",
+        "findBestMatch"
+      ],
+      "dependencies": [
+        "calcACWR",
+        "calcCompositeVB",
+        "calcTier",
+        "TEST_BLOCKS",
+        "ATHLETES"
+      ]
+    },
+    "services/data/notifications": {
+      "symbols": [
+        "toastT",
+        "toast"
+      ],
+      "dependencies": []
+    },
+    "services/data/sessions": {
+      "symbols": [
+        "SESSIONS",
+        "loadAllSessions",
+        "isValdSession"
+      ],
+      "dependencies": [
+        "sb",
+        "currentUser"
+      ]
+    },
+    "features/readiness/readiness": {
+      "symbols": [
+        "readinessSelectedDate",
+        "_lastReadinessRender",
+        "populateReadinessDates",
+        "initReadiness",
+        "renderReadiness",
+        "renderTeamReadinessScore",
+        "renderPRBanner",
+        "renderTeamStrip"
+      ],
+      "dependencies": [
+        "SESSIONS",
+        "isValdSession",
+        "normName",
+        "ATHLETES",
+        "computeReadinessPRs",
+        "READINESS_METRICS",
+        "isOutlier",
+        "READINESS_Z",
+        "ASYM_FLAG_THRESHOLD",
+        "computeTeamReadiness",
+        "TEAM_STRIP_METRICS"
+      ]
+    },
+    "services/scoring/readiness": {
+      "symbols": [
+        "READINESS_METRICS",
+        "TEAM_STRIP_METRICS",
+        "READINESS_Z",
+        "ASYM_FLAG_THRESHOLD",
+        "PR_METRICS",
+        "prHardOk",
+        "computeReadinessPRs",
+        "READINESS_RED_PENALTY",
+        "READINESS_MAX_PENALTY_PER_ATHLETE",
+        "READINESS_BREADTH_WEIGHT",
+        "READINESS_TIERS",
+        "computeTeamReadiness"
+      ],
+      "dependencies": [
+        "FP_HARD_RANGES",
+        "SESSIONS",
+        "isOutlier"
+      ]
+    },
+    "services/export/readiness-pdf": {
+      "symbols": [
+        "exportReadinessPdf"
+      ],
+      "dependencies": [
+        "_lastReadinessRender",
+        "toast",
+        "computeTeamReadiness",
+        "READINESS_METRICS",
+        "isOutlier",
+        "READINESS_Z"
+      ]
+    },
+    "services/data/session-persistence": {
+      "symbols": [
+        "saveTestSessions"
+      ],
+      "dependencies": [
+        "sb",
+        "currentUser",
+        "toast",
+        "normName",
+        "ATHLETES",
+        "loadAllSessions"
+      ]
+    },
+    "services/authentication/authentication": {
+      "symbols": [
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY",
+        "sb",
+        "currentUser",
+        "syncing",
+        "isLocalChange",
+        "initSupabase",
+        "setSyncStatus",
+        "doLogin",
+        "doSignOut",
+        "onLoginSuccess",
+        "bootSupabase"
+      ],
+      "dependencies": [
+        "loadAllSessions",
+        "loadAllAthletes",
+        "enrichAthletesFromSessions",
+        "subscribeToChanges"
+      ]
+    },
+    "services/data/enrichment": {
+      "symbols": [
+        "enrichAthletesFromSessions",
+        "loadAllAthletes"
+      ],
+      "dependencies": [
+        "SESSIONS",
+        "normName",
+        "isOutlier",
+        "ATHLETES",
+        "sb",
+        "dbRowToAthlete",
+        "dedupeATHLETES",
+        "refreshApproachJumpFreshness",
+        "CH",
+        "kc",
+        "_cloudDataLoaded",
+        "setSyncStatus",
+        "toast"
+      ]
+    },
+    "services/data/persistence": {
+      "symbols": [
+        "DB_FIELDS",
+        "REVERSE_DB_FIELDS",
+        "athleteToDbRow",
+        "dbRowToAthlete",
+        "saveTimer",
+        "pendingSaves",
+        "queueSaveAll",
+        "queueSave",
+        "scheduleSave",
+        "flushPendingSaves",
+        "rtChannel",
+        "subscribeToChanges",
+        "handleRemoteChange",
+        "deleteAthleteFromCloud",
+        "_cloudDataLoaded"
+      ],
+      "dependencies": [
+        "currentUser",
+        "avCls",
+        "calcCompositeVB",
+        "calcTier",
+        "calcACWR",
+        "TEST_BLOCKS",
+        "ATHLETES",
+        "sb",
+        "setSyncStatus",
+        "syncing",
+        "isLocalChange",
+        "toast",
+        "refreshAll"
+      ]
+    },
+    "features/audit/audit": {
+      "symbols": [
+        "loadAuditLog"
+      ],
+      "dependencies": [
+        "sb",
+        "currentUser"
+      ]
+    },
+    "services/data/photos": {
+      "symbols": [
+        "handlePhotoUpload",
+        "removeAthletePhoto"
+      ],
+      "dependencies": [
+        "sb",
+        "currentUser",
+        "toast",
+        "ATHLETES",
+        "setSyncStatus",
+        "queueSave",
+        "refreshAll"
+      ]
+    }
+  }
+}

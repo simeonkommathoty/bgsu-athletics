@@ -1,0 +1,64 @@
+<div class="content page active" id="page-roster">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Roster Setup</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--fm);margin-top:3px;">Assign positions once — they persist across all future imports.</div>
+      </div>
+      <div style="display:flex;gap:9px;align-items:center;">
+        <button data-onclick="openSprintAudit()" style="background:none;border:1px solid var(--border2);border-radius:var(--r);padding:9px 16px;color:var(--text2);font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;">⚠ Check Placeholder 10-yd Data</button>
+        <button data-onclick="saveAllPositions()" style="background:var(--orange);border:none;border-radius:var(--r);padding:9px 22px;color:#fff;font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">✓ SAVE ALL POSITIONS</button>
+      </div>
+    </div>
+
+    <!-- Status banner — shown when athletes have no position set -->
+    <div id="roster-status-banner" style="display:none;border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-family:var(--fm);font-size:11px;display:flex;align-items:center;gap:12px;"></div>
+
+    <!-- Position filter tabs -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
+      <span style="font-size:10px;color:var(--text3);font-family:var(--fm);letter-spacing:1px;margin-right:4px;">FILTER:</span>
+      <div class="chip active" id="rf-all" data-onclick="setRosterFilter('all')">All Athletes</div>
+      <div class="chip" id="rf-unset" data-onclick="setRosterFilter('unset')">Unassigned</div>
+      <div class="chip" id="rf-inactive" data-onclick="setRosterFilter('inactive')">Inactive (6mo+)</div>
+      <div class="chip" id="rf-archived" data-onclick="setRosterFilter('archived')" style="border-color:rgba(248,113,113,0.3);color:var(--red);">🗄 Archived</div>
+      <div class="chip" id="rf-OH" data-onclick="setRosterFilter('OH')">OH</div>
+      <div class="chip" id="rf-MB" data-onclick="setRosterFilter('MB')">MB</div>
+      <div class="chip" id="rf-S" data-onclick="setRosterFilter('S')">S</div>
+      <div class="chip" id="rf-RS" data-onclick="setRosterFilter('RS')">RS</div>
+      <div class="chip" id="rf-OPP" data-onclick="setRosterFilter('OPP')">OPP</div>
+      <div class="chip" id="rf-Lib" data-onclick="setRosterFilter('Lib')">Lib</div>
+      <div class="chip" id="rf-DS" data-onclick="setRosterFilter('DS')">DS</div>
+    </div>
+
+    <!-- Roster grid -->
+    <div id="roster-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;"></div>
+
+    <!-- Bottom save bar -->
+    <div style="position:sticky;bottom:0;background:var(--bg2);border-top:1px solid var(--border);padding:14px 0;margin-top:20px;display:flex;align-items:center;gap:14px;">
+      <div id="roster-save-status" style="font-size:11px;color:var(--text3);font-family:var(--fm);flex:1;"></div>
+      <button data-onclick="saveAllPositions()" style="background:var(--orange);border:none;border-radius:var(--r);padding:9px 24px;color:#fff;font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">✓ SAVE ALL POSITIONS</button>
+    </div>
+  </div><div class="modal-overlay" id="merge-overlay">
+  <div class="modal-box" style="margin:60px auto;max-width:520px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Merge Duplicate Athlete</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:3px;">Combines a duplicate record into another athlete, then removes the duplicate.</div>
+      </div>
+      <button class="modal-close" data-onclick="closeMergeModal()">&times;</button>
+    </div>
+    <div style="padding:18px 22px 22px;">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;">
+        <div class="form-lbl" style="margin-bottom:6px;">MERGING</div>
+        <div id="merge-source-label" style="font-family:var(--fh);font-size:15px;font-weight:700;color:var(--text);"></div>
+        <div id="merge-source-sub" style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:2px;"></div>
+      </div>
+      <div class="form-lbl" style="margin-bottom:7px;">INTO (the record that will be kept)</div>
+      <select id="merge-target-sel" style="width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;color:var(--text);font-family:var(--fb);font-size:13px;margin-bottom:16px;box-sizing:border-box;" data-onchange="renderMergePreview()"></select>
+      <div id="merge-preview" style="font-size:11px;color:var(--text2);font-family:var(--fm);line-height:1.6;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:18px;"></div>
+      <div style="display:flex;gap:10px;">
+        <button data-onclick="doMergeAthletes()" id="merge-confirm-btn" style="flex:1;background:var(--orange);border:none;border-radius:var(--r);padding:11px 16px;color:#fff;font-family:var(--fh);font-size:13px;font-weight:800;letter-spacing:0.5px;cursor:pointer;text-transform:uppercase;">MERGE &amp; DELETE DUPLICATE</button>
+        <button data-onclick="closeMergeModal()" style="flex:0 0 auto;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);padding:11px 18px;color:var(--text2);font-family:var(--fh);font-size:13px;font-weight:700;cursor:pointer;">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

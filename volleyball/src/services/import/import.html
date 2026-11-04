@@ -1,0 +1,189 @@
+<div class="modal-overlay" id="imp-overlay">
+  <div class="modal-box" style="margin:36px auto;padding-bottom:0;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Import Athlete Data</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:3px;">VALD ForceDecks · Kinexon · Custom CSV · Manual Entry</div>
+      </div>
+      <button class="modal-close" data-onclick="closeImport()">&times;</button>
+    </div>
+    <div class="imp-tabs">
+      <div class="imp-tab active" id="itab-csv" data-onclick="switchITab('csv')">CSV Upload</div>
+      <div class="imp-tab" id="itab-paste" data-onclick="switchITab('paste')">Paste Data</div>
+      <div class="imp-tab" id="itab-manual" data-onclick="switchITab('manual')">Manual Entry</div>
+    </div>
+
+    <!-- CSV PANEL -->
+    <div class="imp-panel" id="ipanel-csv">
+      <div style="margin-bottom:14px;">
+        <div class="form-lbl" style="margin-bottom:7px;">DATA SOURCE</div>
+        <div class="src-tabs">
+          <div class="src-tab active" id="src-custom" data-onclick="setSrc('custom')">Custom / Standard</div>
+          <div class="src-tab" id="src-vald" data-onclick="setSrc('vald')">VALD Hub (ForceDecks)</div>
+          <div class="src-tab" id="src-kinexon" data-onclick="setSrc('kinexon')">Kinexon Export</div>
+          <div class="src-tab" id="src-teambuildr" data-onclick="setSrc('teambuildr')">Teambuildr Maxes</div>
+          <div class="src-tab" id="src-approachvert" data-onclick="setSrc('approachvert')">Approach Vert Testing</div>
+        </div>
+      </div>
+      <div id="src-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;margin-bottom:14px;font-size:11px;color:var(--text2);font-family:var(--fm);line-height:1.6;white-space:pre-wrap;"></div>
+      <!-- STATE: idle -->
+      <div id="dz-idle">
+        <div class="drop-zone" id="drop-zone">
+          <div style="font-size:28px;margin-bottom:10px;opacity:0.3;">📂</div>
+          <div style="font-family:var(--fh);font-size:16px;font-weight:700;color:var(--text2);margin-bottom:4px;">Drop your CSV file here</div>
+          <div style="font-size:11px;color:var(--text3);font-family:var(--fm);margin-bottom:14px);">.csv files only</div>
+          <button style="background:var(--orange-dim);border:1px solid var(--orange);border-radius:var(--r);padding:8px 20px;color:var(--orange);font-family:var(--fm);font-size:11px;cursor:pointer;letter-spacing:0.5px;" data-onclick="document.getElementById('csv-input').click()">BROWSE FOR FILE</button>
+          <input type="file" id="csv-input" accept=".csv,.CSV" style="display:none;" data-onchange="handleFileSelect(event)">
+        </div>
+      </div>
+
+      <!-- STATE: reading -->
+      <div id="dz-reading" style="display:none;border:2px dashed var(--orange);border-radius:var(--r2);padding:32px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:8px;">⏳</div>
+        <div style="font-family:var(--fm);font-size:12px;color:var(--orange);" id="dz-reading-label">Reading file…</div>
+      </div>
+
+      <!-- STATE: ready — shown after successful parse -->
+      <div id="dz-ready" style="display:none;">
+        <!-- Big green confirmation banner -->
+        <div id="dz-success-banner" style="background:rgba(74,222,128,0.08);border:1.5px solid rgba(74,222,128,0.35);border-radius:var(--r2);padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+          <div style="font-size:26px;flex-shrink:0;">✅</div>
+          <div style="flex:1;">
+            <div style="font-family:var(--fh);font-size:17px;font-weight:800;color:var(--green);letter-spacing:0.5px;" id="dz-file-name">file.csv</div>
+            <div style="font-size:11px;color:var(--green);font-family:var(--fm);margin-top:3px;opacity:0.8;" id="dz-athlete-count">— athletes parsed</div>
+          </div>
+          <button data-onclick="resetCSVUI()" style="background:transparent;border:1px solid rgba(74,222,128,0.3);border-radius:var(--r);padding:5px 12px;color:var(--green);font-family:var(--fm);font-size:10px;cursor:pointer;letter-spacing:0.5px;">✕ CLEAR</button>
+        </div>
+
+        <!-- Import action buttons — large and obvious -->
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          <button id="commit-replace-btn" data-onclick="commitCSV(true)" style="flex:1;min-width:160px;background:var(--orange);border:none;border-radius:var(--r);padding:12px 16px;color:#fff;font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:opacity 0.15s;" data-onmouseover="this.style.opacity='0.85'" data-onmouseout="this.style.opacity='1'">
+            ↓ REPLACE FULL ROSTER
+          </button>
+          <button id="commit-update-btn" data-onclick="commitCSV(false)" style="flex:1;min-width:160px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;color:var(--text);font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:opacity 0.15s;" data-onmouseover="this.style.opacity='0.75'" data-onmouseout="this.style.opacity='1'">
+            + UPDATE / ADD BY NAME
+          </button>
+          <button data-onclick="commitSmartMatch()" id="smart-match-btn" style="flex:1;min-width:160px;background:var(--blue-dim);border:1px solid rgba(96,165,250,0.4);border-radius:var(--r);padding:12px 16px;color:var(--blue);font-family:var(--fh);font-size:15px;font-weight:800;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:opacity 0.15s;" data-onmouseover="this.style.opacity='0.75'" data-onmouseout="this.style.opacity='1'">
+            ⟳ SMART MATCH &amp; REVIEW
+          </button>
+        </div>
+
+        <!-- Button descriptions -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;font-size:10px;color:var(--text3);font-family:var(--fm);line-height:1.5;">
+          <div style="padding:8px 10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);">Wipes existing roster and loads this CSV as the full team. Use for first import or complete refresh.</div>
+          <div style="padding:8px 10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);">Matches names to existing athletes and updates only the columns in this CSV. New names are added. No duplicates created.</div>
+          <div style="padding:8px 10px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);">Same as above but shows a preview of every match before applying — recommended when layering data from different sources.</div>
+        </div>
+
+        <!-- Smart match report — shown after running -->
+        <div id="smart-match-report" style="display:none;margin-bottom:14px;"></div>
+
+        <!-- Column mapping + data preview (collapsible feel) -->
+        <details style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;">
+          <summary style="padding:10px 14px;font-family:var(--fm);font-size:10px;color:var(--text3);cursor:pointer;letter-spacing:1px;list-style:none;display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--orange);">▶</span> VIEW COLUMN MAPPING &amp; DATA PREVIEW
+          </summary>
+          <div style="padding:14px;border-top:1px solid var(--border);">
+            <div class="form-lbl" style="margin-bottom:6px;">COLUMN MAPPING</div>
+            <div id="col-map-tbl" style="overflow-x:auto;margin-bottom:12px;"></div>
+            <div class="form-lbl" style="margin-bottom:6px;">DATA PREVIEW</div>
+            <div id="csv-data-prev" style="overflow-x:auto;"></div>
+          </div>
+        </details>
+
+        <div id="csv-msgs" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- PASTE PANEL -->
+    <div class="imp-panel" id="ipanel-paste" style="display:none;">
+      <div style="margin-bottom:12px;">
+        <div class="form-lbl" style="margin-bottom:7px;">DATA SOURCE</div>
+        <div class="src-tabs">
+          <div class="src-tab active" id="psrc-custom" data-onclick="setPSrc('custom')">Custom / Standard</div>
+          <div class="src-tab" id="psrc-vald" data-onclick="setPSrc('vald')">VALD Hub</div>
+          <div class="src-tab" id="psrc-kinexon" data-onclick="setPSrc('kinexon')">Kinexon</div>
+          <div class="src-tab" id="psrc-teambuildr" data-onclick="setPSrc('teambuildr')">Teambuildr</div>
+          <div class="src-tab" id="psrc-approachvert" data-onclick="setPSrc('approachvert')">Approach Vert</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-bottom:7px;">Copy cells (including header row) from Excel or Google Sheets and paste below.</div>
+      <textarea id="paste-ta" style="width:100%;height:150px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px;color:var(--text);font-family:var(--fm);font-size:11px;resize:vertical;outline:none;" placeholder="Name&#9;Position&#9;CMJ Height&#9;Approach Jump&#9;Peak Power..."></textarea>
+      <div id="paste-msgs" style="margin-top:8px;"></div>
+      <div id="paste-prev" style="display:none;margin-top:10px;overflow-x:auto;"></div>
+      <div style="display:flex;gap:9px;margin-top:12px;">
+        <button data-onclick="parsePaste()" class="btn" style="padding:7px 14px;">PREVIEW</button>
+        <button data-onclick="commitPaste(true)" id="paste-imp-btn" class="btn btn-or" style="padding:7px 14px;display:none;">↓ REPLACE ROSTER</button>
+        <button data-onclick="commitPaste(false)" id="paste-mrg-btn" class="btn" style="padding:7px 14px;display:none;">+ UPDATE / ADD BY NAME</button>
+      </div>
+    </div>
+
+    <!-- MANUAL PANEL -->
+    <div class="imp-panel" id="ipanel-manual" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);">Add a new athlete or edit an existing record.</div>
+        <select id="man-edit-sel" data-onchange="loadForEdit()" style="min-width:200px;"><option value="">— new athlete —</option></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:9px;margin-bottom:12px;">
+        <div><div class="form-lbl">Full Name *</div><input class="form-inp" id="m-name" placeholder="First Last"></div>
+        <div><div class="form-lbl">Position *</div>
+          <select class="form-inp" id="m-pos">
+            <option value="">Select</option><option>OH</option><option>MB</option><option>S</option><option>RS</option><option>OPP</option><option>Lib</option><option>DS</option>
+          </select></div>
+        <div><div class="form-lbl">Year</div>
+          <select class="form-inp" id="m-yr"><option>Fr</option><option>So</option><option>Jr</option><option>Sr</option><option>Gr</option></select></div>
+        <div><div class="form-lbl">Age</div><input class="form-inp" id="m-age" type="number" placeholder="20"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fm);letter-spacing:1.5px;margin-bottom:9px;padding-top:8px;border-top:1px solid var(--border);">JUMP TESTING</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px;">
+        <div><div class="form-lbl">Approach Jump (in)</div><input class="form-inp" id="m-appr" type="number" step="0.1" placeholder="97.5"></div>
+        <div><div class="form-lbl">CMJ Height (in)</div><input class="form-inp" id="m-cmj" type="number" step="0.1" placeholder="22.5"></div>
+        <div><div class="form-lbl">Standing Vert (in)</div><input class="form-inp" id="m-vert" type="number" step="0.1" placeholder="20.0"></div>
+        <div><div class="form-lbl">10-yd Sprint (sec)</div><input class="form-inp" id="m-s10" type="number" step="0.01" placeholder="1.72"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fm);letter-spacing:1.5px;margin-bottom:9px;padding-top:8px;border-top:1px solid var(--border);">VALD FORCE PLATE</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px;">
+        <div><div class="form-lbl">Peak Power (W)</div><input class="form-inp" id="m-pp" type="number" step="1" placeholder="3500"></div>
+        <div><div class="form-lbl">RSI-Modified</div><input class="form-inp" id="m-rsi" type="number" step="0.01" placeholder="0.38"></div>
+        <div><div class="form-lbl">Asymmetry %</div><input class="form-inp" id="m-asym" type="number" step="0.1" placeholder="5.2"></div>
+        <div><div class="form-lbl">Ecc. RFD (N/s)</div><input class="form-inp" id="m-rfd" type="number" placeholder="2850"></div>
+        <div><div class="form-lbl">Conc. Impulse (N·s)</div><input class="form-inp" id="m-ci" type="number" step="0.1" placeholder="185"></div>
+        <div><div class="form-lbl">Ecc. Impulse (N·s)</div><input class="form-inp" id="m-ei" type="number" step="0.1" placeholder="165"></div>
+        <div><div class="form-lbl">Contraction Time (ms)</div><input class="form-inp" id="m-ct" type="number" placeholder="680"></div>
+      </div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fm);letter-spacing:1.5px;margin-bottom:9px;padding-top:8px;border-top:1px solid var(--border);">KINEXON WORKLOAD</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;">
+        <div><div class="form-lbl">Jump Volume (session)</div><input class="form-inp" id="m-jv" type="number" placeholder="185"></div>
+        <div><div class="form-lbl">Avg Jump Ht (in)</div><input class="form-inp" id="m-ajh" type="number" step="0.1" placeholder="18.5"></div>
+        <div><div class="form-lbl">Player Load</div><input class="form-inp" id="m-pl" type="number" step="0.1" placeholder="520"></div>
+        <div><div class="form-lbl">Acute Load (7-day)</div><input class="form-inp" id="m-al" type="number" step="0.1" placeholder="480"></div>
+        <div><div class="form-lbl">Chronic Load (28-day)</div><input class="form-inp" id="m-cl" type="number" step="0.1" placeholder="440"></div>
+      </div>
+      <div id="man-msgs" style="margin-bottom:9px;"></div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;">
+        <button data-onclick="submitManual()" class="btn btn-or" style="padding:8px 18px;">✓ SAVE ATHLETE</button>
+        <button data-onclick="deleteAthlete()" id="man-del-btn" class="btn" style="padding:8px 14px;display:none;color:var(--red);border-color:rgba(248,113,113,0.3);">✕ REMOVE</button>
+        <button data-onclick="clearManual()" class="btn" style="padding:8px 12px;">CLEAR</button>
+      </div>
+      <div id="man-ok" style="display:none;margin-top:10px;" class="ok"></div>
+    </div>
+
+    <div style="padding:12px 22px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);font-family:var(--fm);">
+      Data is session-only. Use Export CSV to save. <span data-onclick="if(confirm('Reset to sample data?'))location.reload()" style="color:var(--orange);cursor:pointer;">Reset to sample data</span>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="sprint-audit-overlay">
+  <div class="modal-box" style="margin:60px auto;max-width:640px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">10-yd Sprint — Placeholder Data Check</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:3px;">Athletes whose current 10-yd value was never confirmed by a real import.</div>
+      </div>
+      <button class="modal-close" data-onclick="closeSprintAudit()">&times;</button>
+    </div>
+    <div style="padding:18px 22px 22px;">
+      <div id="sprint-audit-body"></div>
+    </div>
+  </div>
+</div>

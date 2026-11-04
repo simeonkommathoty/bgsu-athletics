@@ -1,0 +1,15 @@
+<div class="content page active" id="page-leaderboard">
+    <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">All Metrics Leaderboard</div>
+    <div class="chip-row" id="metric-chips"></div>
+    <div class="grid12">
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;" id="lb-title"><div class="cdot"></div>Rankings</div>
+        <div class="tw"><table><thead><tr><th>#</th><th>Athlete</th><th>Pos</th><th id="lb-col">Value</th><th>Tier</th></tr></thead><tbody id="lb-tbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ctitle" style="margin-bottom:12px;"><div class="cdot"></div>Distribution</div>
+        <div class="cw" style="height:290px;"><canvas id="lb-chart" role="img" aria-label="Metric distribution bar chart">Metric distribution across all athletes.</canvas></div>
+        <div id="lb-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>

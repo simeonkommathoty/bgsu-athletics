@@ -1,0 +1,61 @@
+<div class="content page active" id="page-forceplate">
+    <div class="stripe"></div>
+    <div style="margin-bottom:14px;">
+      <div style="font-family:var(--fh);font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Force Plate Analytics — VALD ForceDecks</div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--fm);margin-top:3px;letter-spacing:0.5px;">Showing each athlete's most recent test session · See Readiness Hub for trends and deviations</div>
+    </div>
+    <div class="kpi-strip" style="grid-template-columns:repeat(4,1fr);">
+      <div class="kpi-card"><div class="kpi-lbl">Avg Jump Height</div><div class="kpi-val" id="fp-jh">—</div><div class="kpi-sub">inches (CMJ)</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Peak Power</div><div class="kpi-val" id="fp-pp">—</div><div class="kpi-sub">Watts (absolute)</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg RSI-Modified</div><div class="kpi-val" id="fp-rsi">—</div><div class="kpi-sub">jump ht / contraction t</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Avg Ecc. RFD</div><div class="kpi-val" id="fp-rfd">—</div><div class="kpi-sub">N/s (braking)</div></div>
+    </div>
+    <div class="grid2 mb5">
+      <div class="card">
+        <div class="card-header">
+          <div class="ctitle"><div class="cdot"></div>Force Plate Leaderboard</div>
+          <select id="fp-sort" data-onchange="renderFPBoard()">
+            <!-- Options dynamically populated by initFP based on data availability -->
+          </select>
+        </div>
+        <div class="tw"><table><thead><tr><th>#</th><th>Athlete</th><th>Pos</th><th>Jump Ht</th><th id="fp-col-hd">Pk Power</th><th>Tier</th><th title="Clear value">×</th></tr></thead><tbody id="fp-tbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="ctitle"><div class="cdot"></div>CMJ Height — Last 6 Months</div>
+          <select id="cmj-athlete-sel" data-onchange="renderCMJScatter()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:5px 10px;color:var(--text);font-family:var(--fm);font-size:11px;">
+            <option value="">All athletes</option>
+          </select>
+        </div>
+        <div class="cw" style="height:270px;"><canvas id="cmj-scatter"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="ctitle"><div class="cdot"></div>Force-Time Phase Breakdown (Team Averages)</div></div>
+      <div class="cw" style="height:200px;"><canvas id="phase-bar" role="img" aria-label="Grouped bar chart of eccentric and concentric phase metrics by position">Eccentric and concentric phase averages by position.</canvas></div>
+    </div>
+
+    <!-- CMJ PR TRACKER -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-header">
+        <div class="ctitle"><div class="cdot"></div>CMJ Height — Personal Records</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--fm);">All-time best from VALD sessions · <span id="pr-date-range" style="color:var(--tan);"></span></div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--fm);">
+          <thead><tr style="background:var(--orange);color:#fff;">
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">#</th>
+            <th style="padding:7px 10px;text-align:left;font-family:var(--fh);font-size:10px;">Athlete</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Pos</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">PR Height</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">PR Date</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Most Recent</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Recent Date</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">vs PR</th>
+            <th style="padding:7px 10px;text-align:center;font-family:var(--fh);font-size:10px;">Sessions</th>
+          </tr></thead>
+          <tbody id="pr-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>

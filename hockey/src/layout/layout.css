@@ -1,0 +1,4 @@
+.feature-error { margin: 16px 26px; padding: 14px; border: 1px solid var(--red); color: var(--red); border-radius: var(--r); display:flex; align-items:center; gap:16px; }
+button.nav-item { width:100%; background:none; border-top:0; border-right:0; border-bottom:0; text-align:left; }
+#feature-content { min-width:0; }
+.nav-badge { display:none; margin-left:auto; background:var(--orange); color:#fff; font-size:9px; font-family:var(--fm); border-radius:10px; padding:1px 6px; }
