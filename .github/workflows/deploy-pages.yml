@@ -36,7 +36,7 @@ jobs:
           # Parity/integrity tests compare against the private originals/ reference HTML,
           # which is intentionally not published; they run locally (npm test in each sport).
           # (Allow-list of tests that need no originals/; node's negative-lookahead filtering is unreliable.)
-          RUN='^(session reads|paginated session|authentication delegates|password-reset redirect|volleyball has no password|demo |in-memory client|outside demo mode|automatic metadata|failed feature imports)'
+          RUN='^(session reads|paginated session|authentication delegates|password-reset redirect|volleyball has no password|demo |in-memory client|outside demo mode|automatic metadata|failed feature imports|photoPath|signed URLs|a public URL is never|nothing is requested|avatars show|upload stores)'
           for sport in hockey volleyball; do
             (cd $sport && ls tests/*.test.js | grep -v integrity | xargs node --test --test-name-pattern="$RUN")
           done

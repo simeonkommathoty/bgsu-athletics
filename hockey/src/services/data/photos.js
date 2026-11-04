@@ -8,6 +8,68 @@ const XLSX=context.XLSX;
 const setTimeout=context.setTimeout;
 const clearTimeout=context.clearTimeout;
 const requestAnimationFrame=context.requestAnimationFrame;
+
+// ── Private photo storage: short-lived signed URLs ───────────────
+// photo_url may hold a storage object path (new uploads) or a legacy public URL.
+// The stored value is never replaced by a signed URL, so signed URLs are never persisted.
+const PHOTO_BUCKET='athlete-photos', SIGNED_URL_SECONDS=900;
+const photoCache=new Map(); // storage path -> {url, expires}
+let photoResolveQueued=false;
+function photoPath(value){
+  if(!value||typeof value!=='string') return null;
+  if(!/^https?:\/\//i.test(value)) return value;
+  const marker='/'+PHOTO_BUCKET+'/', i=value.indexOf(marker);
+  if(i<0) return null;
+  try{return decodeURIComponent(value.slice(i+marker.length).split('?')[0]);}catch(e){return null;}
+}
+// Synchronous, render-safe: a usable signed URL, or '' (caller shows initials) while one is fetched or if signing failed.
+function photoSrc(athlete){
+  const path=photoPath(athlete&&athlete.photo_url);
+  if(!path) return '';
+  const hit=photoCache.get(path);
+  if(hit&&hit.expires>Date.now()) return hit.url;
+  if(!photoResolveQueued){photoResolveQueued=true;Promise.resolve().then(()=>resolvePhotoUrls());}
+  return '';
+}
+let photoResolveInflight=null;
+// One request at a time: concurrent callers share the in-flight call.
+function resolvePhotoUrls(){
+  photoResolveQueued=false;
+  if(photoResolveInflight) return photoResolveInflight;
+  photoResolveInflight=resolvePhotoUrlsNow().finally(()=>{photoResolveInflight=null;});
+  return photoResolveInflight;
+}
+async function resolvePhotoUrlsNow(){
+  const sb=context.api.sb, storage=sb&&sb.storage;
+  if(!sb||!context.api.currentUser||!storage||typeof storage.from!=='function') return 0;
+  const bucket=storage.from(PHOTO_BUCKET);
+  if(!bucket||typeof bucket.createSignedUrls!=='function') return 0;
+  const now=Date.now(), paths=[];
+  for(const a of context.api.ATHLETES||[]){
+    const p=photoPath(a.photo_url);
+    if(!p) continue;
+    const hit=photoCache.get(p);
+    if(hit&&hit.expires>now) continue;
+    if(!paths.includes(p)) paths.push(p);
+  }
+  if(!paths.length) return 0;
+  let resolved=0;
+  try{
+    const {data,error}=await bucket.createSignedUrls(paths,SIGNED_URL_SECONDS);
+    if(error) throw error;
+    for(const row of data||[]){
+      if(row&&row.signedUrl&&!row.error){photoCache.set(row.path,{url:row.signedUrl,expires:now+(SIGNED_URL_SECONDS-60)*1000});resolved++;}
+    }
+  }catch(e){console.warn('Signed photo URLs unavailable:',e&&e.message||e);}
+  for(const p of paths){
+    const hit=photoCache.get(p);
+    if(hit&&hit.expires>now) continue;
+    // Signing failed for this file: never fall back to a public URL; show initials and retry later.
+    photoCache.set(p,{url:'',expires:now+60000});
+  }
+  if(resolved){try{context.api.refreshAll();}catch(e){console.error('Photo refresh failed:',e);}}
+  return resolved;
+}
 // ── Athlete Photo Upload ─────────────────────────────────────────
 // Reference: originals/hockey.html:7457
 async function handlePhotoUpload(event, athleteId){
@@ -33,21 +95,21 @@ async function handlePhotoUpload(event, athleteId){
       .upload(filename, file, {cacheControl:'3600', upsert:false});
     if(uploadErr) throw uploadErr;
 
-    // Get public URL
-    const {data:urlData} = context.api.sb.storage.from('athlete-photos').getPublicUrl(filename);
-    const publicUrl = urlData.publicUrl;
+    // The bucket may be private: store the object path; display uses short-lived signed URLs.
+    const storedPhoto = filename;
 
     // Delete old photo if exists (cleanup)
     if(athlete.photo_url){
-      const oldPath=athlete.photo_url.split('/athlete-photos/')[1];
-      if(oldPath) context.api.sb.storage.from('athlete-photos').remove([oldPath]).catch(()=>{});
+      const oldPath=photoPath(athlete.photo_url);
+      if(oldPath){photoCache.delete(oldPath);context.api.sb.storage.from('athlete-photos').remove([oldPath]).catch(()=>{});}
     }
 
     // Update local + queue sync — the actual upload is done and successful
     // at this point, so failures from here on (e.g. an unrelated rendering
     // bug) must never be reported as "upload failed".
-    athlete.photo_url=publicUrl;
+    athlete.photo_url=storedPhoto;
     context.api.queueSave(athlete);
+    await resolvePhotoUrls();
     context.api.toast('✓ Photo uploaded');
     context.api.setSyncStatus('online','SYNCED');
   } catch(e){
@@ -78,8 +140,9 @@ async function removeAthletePhoto(athleteId){
 
   context.api.setSyncStatus('syncing','REMOVING');
   try{
-    const oldPath=athlete.photo_url.split('/athlete-photos/')[1];
+    const oldPath=photoPath(athlete.photo_url);
     if(oldPath){
+      photoCache.delete(oldPath);
       await context.api.sb.storage.from('athlete-photos').remove([oldPath]);
     }
     athlete.photo_url=null;
@@ -100,6 +163,9 @@ async function removeAthletePhoto(athleteId){
 
 return Object.defineProperties({}, {
   handlePhotoUpload: {enumerable:true, configurable:true, get:()=>handlePhotoUpload},
-  removeAthletePhoto: {enumerable:true, configurable:true, get:()=>removeAthletePhoto}
+  removeAthletePhoto: {enumerable:true, configurable:true, get:()=>removeAthletePhoto},
+  photoSrc: {enumerable:true, configurable:true, get:()=>photoSrc},
+  resolvePhotoUrls: {enumerable:true, configurable:true, get:()=>resolvePhotoUrls},
+  photoPath: {enumerable:true, configurable:true, get:()=>photoPath}
 });
 }

@@ -32,8 +32,9 @@ function posPill(p){return`<span class="pos-pill p-${p}">${p}</span>`;}
 
 // Reference: originals/hockey.html:1421
 function ava(a,sz=''){
-  if(a.photo_url){
-    return`<div class="av${sz} av-photo" style="background-image:url('${a.photo_url}');background-size:cover;background-position:center;background-color:var(--bg4);"></div>`;
+  const photo=a.photo_url?context.api.photoSrc(a):'';
+  if(photo){
+    return`<div class="av${sz} av-photo" style="background-image:url('${photo.replace(/'/g,'%27')}');background-size:cover;background-position:center;background-color:var(--bg4);"></div>`;
   }
   return`<div class="av${sz} ${a.av}">${a.initials}</div>`;
 }
