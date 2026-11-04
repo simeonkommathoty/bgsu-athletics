@@ -32,7 +32,8 @@ function posPill(p){return`<span class="pos-pill p-${p}">${p}</span>`;}
 
 // Reference: originals/hockey.html:1421
 function ava(a,sz=''){
-  const photo=a.photo_url?context.api.photoSrc(a):'';
+  // Demo Mode only: the synthetic avatar is an embedded data URI (no request, no storage lookup).
+  const photo=a.photo_url?(context.api.demoMode&&/^data:image\/svg\+xml/.test(a.photo_url)?a.photo_url:context.api.photoSrc(a)):'';
   if(photo){
     return`<div class="av${sz} av-photo" style="background-image:url('${photo.replace(/'/g,'%27')}');background-size:cover;background-position:center;background-color:var(--bg4);"></div>`;
   }

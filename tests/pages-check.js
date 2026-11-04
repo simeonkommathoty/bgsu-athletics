@@ -12,6 +12,7 @@ const root=path.resolve(import.meta.dirname,'..','dist');
 const BASE=(process.env.BASE||'/bgsu-athletics/').replace(/\/?$/,'/');
 const PORT=Number(process.env.PORT||5172),ORIGIN=`http://127.0.0.1:${PORT}`;
 const TYPES={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.map':'application/json'};
+const avatarPages=[];
 const SPORTS=[{id:'hockey',features:12},{id:'volleyball',features:11}];
 const BACKEND=/\.supabase\.(co|in)|\/rest\/v1|\/auth\/v1|\/storage\/v1|\/realtime\/v1/i;
 
@@ -81,6 +82,17 @@ try{
       assert.ok(t.length>60,`${sport.id}/${id} rendered`);
       assert.doesNotMatch(t,/NaN|undefined|\[object|Infinity/,`${sport.id}/${id} invalid values`);
       assert.ok(await page.locator('#demo-banner').count(),`${sport.id}/${id} still in demo`);
+      if(id==='roster'||id==='profile'){
+        const av=await page.evaluate(async()=>{
+          const els=[...document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('.av-photo')];
+          const src=els[0]?.style.backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+          const ok=src?await new Promise(r=>{const i=new Image();i.onload=()=>r(i.naturalWidth>0);i.onerror=()=>r(false);i.src=src;}):false;
+          return {count:els.length,initialsOnly:document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('.av:not(.av-photo)').length,decoded:ok,data:src?.startsWith('data:image/svg+xml')};
+        });
+        assert.ok(av.count>0&&av.decoded&&av.data,`${sport.id}/${id} shows the embedded demo avatar (${JSON.stringify(av)})`);
+        assert.equal(av.initialsOnly,0,`${sport.id}/${id} every synthetic player has the avatar`);
+        avatarPages.push(`${sport.id}/${id}:${av.count}`);
+      }
       charts+=await page.evaluate(()=>[...document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('canvas')].filter(c=>c.width>0&&c.height>0).length);
     }
     assert.ok(charts>0,`${sport.id} charts render`);
@@ -95,6 +107,7 @@ try{
     console.log(`PASS ${sport.id} demo under ${BASE} (${ids.length}/${sport.features} features, ${charts} chart canvases)`);
   }
 
+  assert.equal(avatarPages.length,4,'avatar verified on roster and profile of both sports');console.log('PASS demo avatar rendered:',avatarPages.join(', '));
   assert.deepEqual(all.filter(u=>BACKEND.test(u)),[],'no Supabase request');
   assert.deepEqual(sockets.filter(u=>!u.startsWith('ws://127.0.0.1')),[],'no remote websocket');
   assert.deepEqual(external.filter(u=>!/fonts\.(googleapis|gstatic)\.com/.test(u)),[],'only fonts requested externally');

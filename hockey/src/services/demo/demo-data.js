@@ -1,6 +1,7 @@
 // 100% synthetic Hockey demo dataset. No real athlete, name, or measurement is
 // used. Values are generated from a fixed seed inside the sport's own norm
 // ranges, with dates relative to "today" so the recency windows stay populated.
+import {DEMO_AVATAR} from './demo-avatar.js';
 function prng(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296;};}
 const iso=(today,daysAgo)=>new Date(today.getTime()-daysAgo*86400000).toISOString().slice(0,10);
 const lerp=(lo,hi,q)=>lo+(hi-lo)*q;
@@ -31,7 +32,7 @@ export function buildDemoTables(today=new Date()) {
     const latest=iso(today,4+i%5);
     const row={
       id:i+1,canonical_name:name,display_name:name,initials:`D${pos}${n}`,pos,yr,age:18+['Fr','So','Jr','Sr'].indexOf(yr)+Math.floor(rnd()*2),av:`a${i%6}`,
-      name_locked:true,pos_locked:true,archived:false,sources:[{file:'demo-synthetic.csv',date:iso(today,5),keys:['approachJump','cmjHeight','sprint10']}],
+      photo_url:DEMO_AVATAR,name_locked:true,pos_locked:true,archived:false,sources:[{file:'demo-synthetic.csv',date:iso(today,5),keys:['approachJump','cmjHeight','sprint10']}],
       trend:Array.from({length:6},(_,k)=>Math.round(30+q*45+k*2+(rnd()-0.5)*6)),
     };
     const set=(col,val,dateCol)=>{row[col]=val;if(dateCol)row[dateCol]=latest;};

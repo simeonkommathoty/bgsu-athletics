@@ -1,0 +1,5 @@
+// Generic placeholder athlete avatar for Demo Mode: an original, simple illustration
+// (no real person, no third-party artwork, no licence constraints). Embedded as a data
+// URI so Demo Mode needs no image request of any kind.
+const SVG='<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4656"/><stop offset="1" stop-color="#1f2733"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><path d="M30 200c0-44 30-68 70-68s70 24 70 68z" fill="#fd5000"/><path d="M82 132l18 22 18-22" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><rect x="88" y="104" width="24" height="30" rx="8" fill="#c9a98c"/><ellipse cx="100" cy="78" rx="30" ry="34" fill="#d8b99b"/><path d="M70 74c0-24 14-38 30-38s30 14 30 38c-8-14-18-20-30-20s-22 6-30 20z" fill="#2b2f36"/></svg>';
+export const DEMO_AVATAR='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(SVG);
