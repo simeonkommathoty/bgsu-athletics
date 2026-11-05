@@ -59,8 +59,3 @@ test('authentication delegates to Supabase and reports rejected sign-in',async()
   await api.doLogin();assert.equal(signIn.email,'coach@example.invalid');assert.match(document.getElementById('login-msg').innerHTML,/Synthetic rejected sign-in/);
   assert.equal(api.currentUser,null);
 });
-test('volleyball has no password-recovery flow, so no root-origin redirect can exist',async()=>{
-  const {readFileSync}=await import('node:fs');
-  const source=readFileSync(new URL('../src/services/authentication/authentication.js',import.meta.url),'utf8');
-  assert.doesNotMatch(source,/resetPasswordForEmail|PASSWORD_RECOVERY|location\.origin/);
-});

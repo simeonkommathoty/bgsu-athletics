@@ -137,6 +137,17 @@ try{
     console.log(`PASS ${sport.id} demo under ${BASE} (${ids.length}/${sport.features} features, ${charts} chart canvases)`);
   }
 
+  // Volleyball sign-in: "Forgot password?" is present and wired through the real event system
+  // (empty email -> instruction, no network); the reset screen exists and stays hidden.
+  await page.goto(`${ORIGIN}${BASE}volleyball/`);
+  await page.waitForSelector('#forgot-password-link',{state:'visible',timeout:20000});
+  await page.locator('#login-email').fill('');
+  await page.locator('#forgot-password-link').click();
+  await page.waitForFunction(()=>/Enter your email/.test(document.getElementById('login-msg').textContent),null,{timeout:5000});
+  assert.equal(await page.locator('#reset-password-overlay').evaluate(e=>getComputedStyle(e).display),'none');
+  assert.equal(await page.locator('#reset-password-confirm').count(),1);
+  console.log('PASS volleyball sign-in shows Forgot password? (reset screen hidden until a recovery link)');
+
   assert.equal(avatarPages.length,4,'avatar verified on roster and profile of both sports');console.log('PASS demo avatar rendered:',avatarPages.join(', '));
   assert.deepEqual(all.filter(u=>BACKEND.test(u)),[],'no Supabase request');
   assert.deepEqual(sockets.filter(u=>!u.startsWith('ws://127.0.0.1')),[],'no remote websocket');

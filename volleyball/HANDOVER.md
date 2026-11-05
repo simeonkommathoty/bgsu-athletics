@@ -41,3 +41,7 @@ Browser-safe URL/key come from ignored `volleyball/.env.local` (VITE_SUPABASE_UR
 ## Invalid dates and import wording
 - `isValidTestDate` (`services/scoring/outliers.js`) defines a usable `test_date`. `loadAllSessions` (`services/data/sessions.js`) skips other rows with a warning + toast; `_isOutlierUncached` skips only the rolling-window check for a malformed reference date. Covered by `tests/regression-invalid-dates.test.js`.
 - The import dialog footer (`#imp-save-note`) keeps its production wording; `openImport` replaces it with an explicit "temporary, synthetic" message only in Demo Mode.
+
+## Password recovery
+Coaches can use "Forgot password?" on the sign-in screen (`services/authentication`). The reset email returns to the app's own route (`window.location.origin + pathname`, so localhost and GitHub Pages both work) and Supabase starts a short-lived recovery session; the app shows a Set New Password screen and never loads data on that session. After a successful change the recovery session is ended and the coach signs in again. Expired, invalid or already-used links show a message on the sign-in screen. The request always answers the same way whether or not the email belongs to a coach.
+**Supabase setting required:** this project's Authentication → URL Configuration must allow `https://simeonkommathoty.github.io/bgsu-athletics/volleyball/` (and `http://localhost:5171/**` etc. for local use), otherwise reset links fall back to the Site URL. Tests: `tests/password-recovery.test.js`. This code is independent of Hockey's.
