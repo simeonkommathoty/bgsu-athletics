@@ -54,7 +54,9 @@ function initReadiness(){
 function renderReadiness(){
   readinessSelectedDate=document.getElementById('readiness-date').value;
   const date=readinessSelectedDate;
-  const date30d=new Date(new Date(date).getTime()-30*24*60*60*1000).toISOString().slice(0,10);
+  // With no sessions there is no date to select; new Date('') is invalid and toISOString() would throw.
+  const base=new Date(date);
+  const date30d=isNaN(base)?'':new Date(base.getTime()-30*24*60*60*1000).toISOString().slice(0,10);
 
   // This table is specifically VALD ForceDecks CMJ data — jump_height/peak_power/
   // rsi_mod/takeoff velocity/conc_impulse/asymmetry are all VALD-specific fields.

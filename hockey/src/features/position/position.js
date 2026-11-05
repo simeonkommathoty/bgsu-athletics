@@ -78,7 +78,7 @@ function renderPosBoard(){
     document.getElementById('pos-avgs').innerHTML=`<div style="background:var(--bg3);border-radius:var(--r);padding:10px;border:1px solid var(--border);">
       <div style="font-size:9px;color:var(--text3);font-family:var(--fm);letter-spacing:1px;margin-bottom:9px;">POSITION AVERAGES</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;">
-        ${keyMets.map(k=>{const m=context.api.getM(k);const av=grp.reduce((s,a)=>s+a[k],0)/grp.length;return`<div style="text-align:center;"><div style="font-family:var(--fm);font-size:14px;color:var(--orange);">${m.fmt(av)}</div><div style="font-size:8.5px;color:var(--text3);font-family:var(--fm);margin-top:2px;">${m.label.split(' ').slice(0,2).join(' ')}</div></div>`;}).join('')}
+        ${keyMets.map(k=>{const m=context.api.getM(k);const have=grp.map(a=>a[k]).filter(v=>typeof v==='number'&&Number.isFinite(v));const av=have.length?have.reduce((s,v)=>s+v,0)/have.length:null;return`<div style="text-align:center;"><div style="font-family:var(--fm);font-size:14px;color:var(--orange);">${av===null?'—':m.fmt(av)}</div><div style="font-size:8.5px;color:var(--text3);font-family:var(--fm);margin-top:2px;">${m.label.split(' ').slice(0,2).join(' ')}</div></div>`;}).join('')}
       </div></div>`;
   }
 }

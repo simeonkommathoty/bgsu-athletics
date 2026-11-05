@@ -70,6 +70,17 @@ try{
     await page.goto(`${ORIGIN}${BASE}${sport.id}/#demo`);await page.reload();
     await page.waitForFunction(()=>document.getElementById('demo-banner'),null,{timeout:20000});
     await page.waitForFunction(()=>/Demo (Forward|Defense|Goalie|Setter|Outside|Middle|Libero|Opposite|Hitter|Athlete)/i.test(document.querySelector('[data-feature-root]')?.shadowRoot?.textContent||''),null,{timeout:20000});
+    // Regression: a click made while the demo data is still loading must not be overridden by the
+    // post-load re-render (it used to jump back to the dashboard), and all 14 players must be distinct.
+    await page.goto(`${ORIGIN}${BASE}${sport.id}/#demo`);
+    await page.waitForFunction(()=>document.getElementById('demo-banner'),null,{timeout:20000});
+    await page.locator('#feature-nav [data-feature="profile"]').click();
+    await page.waitForTimeout(1500);
+    const early=await page.evaluate(()=>{const r=document.querySelector('[data-feature-root]')?.shadowRoot;const sel=r?.querySelector('#profile-sel');
+      return {active:document.querySelector('#feature-nav .active')?.dataset.feature,options:sel?.options.length,selected:sel?.selectedOptions[0]?.textContent.replace(/\s*\(.*$/,'').trim(),hero:r?.querySelector('#prof-hero')?.innerText||''};});
+    assert.equal(early.active,'profile',`${sport.id}: early click kept (not overridden by post-load dashboard navigation)`);
+    assert.equal(early.options,14,`${sport.id}: all 14 synthetic players are distinct (none merged by dedupe)`);
+    assert.ok(early.hero.toUpperCase().includes(early.selected.toUpperCase()),`${sport.id}: profile card "${early.hero.slice(0,30)}" matches dropdown "${early.selected}"`);
     const ids=await page.locator('#feature-nav [data-feature]').evaluateAll(n=>n.map(x=>x.dataset.feature));
     assert.equal(ids.length,sport.features,`${sport.id} feature count`);
     let charts=0;

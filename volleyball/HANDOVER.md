@@ -6,7 +6,7 @@ Independent Vite / vanilla-JS module app for BGSU Volleyball, built from `../ori
 ## Status (this checkpoint)
 - 11/11 original sidebar features extracted and auto-registered via `import.meta.glob`: dashboard, roster, profile, jumping, forceplate, readiness, workload, leaderboard, position, compare, audit. (Volleyball has no Progress page; Hockey's 12th feature does not exist here.)
 - 33 modules: 11 features + services (scoring, data, import, export, authentication, photos, persistence). Volleyball sources: VALD, Kinexon (not Firstbeat), Teambuildr, approach-vert, custom CSV. No XLSX and no password-reset flow exist in the original.
-- Original defect preserved: `renderWLHistory` writes to `#wl-focus-label` (and `wl-clear-focus` is guarded) when there is no Kinexon data, but the element is absent from the page, so Workload fails in the empty-data case exactly like the original (the shell now shows a labeled error + Retry instead of a silent rejection). Fixtures include Kinexon rows so the happy path is tested.
+- Fixed (was an original defect): `renderWLHistory` wrote to `#wl-focus-label` when there is no Kinexon data, but that element is absent from the page, so Workload threw in the empty-data case. It now falls back to `#wl-cal-label`; covered by `tests/regression-empty-data.test.js`.
 - Hand edit after extraction: `features/workload/workload.js` `initWL` returns its promise and checks `context.signal` (same fix as Hockey). `tools/extract-reference.mjs` overwrites this; do not rerun it.
 
 ## Layout

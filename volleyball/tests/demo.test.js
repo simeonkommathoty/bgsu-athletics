@@ -10,7 +10,7 @@ test('demo dataset is synthetic, varied, dated and deliberately incomplete',()=>
   const t=buildDemoTables(new Date('2026-11-03T12:00:00Z'));
   assert.ok(t.athletes.length>=12);
   assert.deepEqual([...new Set(t.athletes.map(a=>a.pos))].sort(),POSITIONS);
-  assert.ok(t.athletes.every(a=>/^Demo (Outside|Middle|Setter|RightSide|Opposite|Libero|DefSpec) \d\d$/.test(a.canonical_name)),'placeholder names only');
+  assert.ok(t.athletes.every(a=>/^Demo (Outside|Middle|Setter|RightSide|Opposite|Libero|DefSpec) [A-Z][a-z]+$/.test(a.canonical_name)),'placeholder names only');
   assert.ok(new Set(t.test_sessions.map(s=>s.test_date)).size>=8,'multiple testing dates');
   assert.ok(t.test_sessions.some(s=>s.jumps_total!=null)&&t.test_sessions.some(s=>s.jump_height!=null),'workload and force plate sessions');
   assert.ok(new Set(t.test_sessions.filter(s=>s.test_type==='approach_vert').map(h=>h.test_date)).size>=3,'dated testing history');

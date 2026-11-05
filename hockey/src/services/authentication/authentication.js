@@ -169,8 +169,11 @@ async function onLoginSuccess(){
   context.api.rescoreAllAthletes();          // composite from the fully merged values (fixed baseline)
   context.api.subscribeToChanges();
   setSyncStatus('online','SYNCED');
-  context.navigate('dashboard');
-  setTimeout(()=>context.navigate('dashboard'), 300);
+  // Re-render the feature the user is on (dashboard by default) with the loaded data. A fixed
+  // navigate('dashboard') would override any feature the user opened while data was loading.
+  const landing=()=>context.activeFeature?.()||'dashboard';
+  context.navigate(landing());
+  setTimeout(()=>context.navigate(landing()), 300);
 }
 
 // ── Boot: check for existing session, otherwise show login ───────

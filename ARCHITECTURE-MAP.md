@@ -531,8 +531,8 @@ Same three files in each sport: `hockey/src/services/demo/` and `volleyball/src/
 | `demo-backend.js` | `createDemoClient(seed)`: a stand-in for the Supabase client. Query methods: `select`, `insert`, `update`, `upsert`, `delete`, `eq`, `neq`, `in`, `is`, `not`, `gt`, `gte`, `lt`, `lte`, `like`, `ilike`, `order`, `range`, `limit`, `single`, `maybeSingle`. The realtime channel does nothing. Storage and password calls return a "Disabled in Demo Mode" error. `getSession` always returns null. Seed rows are copied, so fixtures are never mutated. |
 | `demo-data.js` | `buildDemoTables(today)`: seeded, deterministic synthetic tables with dates relative to `today`. 14 athletes per sport. |
 
-**Hockey tables:** `athletes`, `test_sessions`, `kpi_history`, `session_drills` (empty), `audit_log`. Names are `Demo Forward 01`, `Demo Defense 01`, `Demo Goalie 01` and so on.
-**Volleyball tables:** `athletes`, `test_sessions`, `audit_log`. Names are `Demo Outside 01`, `Demo Middle 01`, `Demo Libero 01`, `Demo DefSpec 01` and so on.
+**Hockey tables:** `athletes`, `test_sessions`, `kpi_history`, `session_drills` (empty), `audit_log`. Names are `Demo Forward Alpha`, `Demo Defense Alpha`, `Demo Goalie Alpha` and so on (digit-free on purpose: the identity normalisation strips digits, so numbered names were merged by dedupe).
+**Volleyball tables:** `athletes`, `test_sessions`, `audit_log`. Names are `Demo Outside Alpha`, `Demo Middle Alpha`, `Demo Libero Alpha`, `Demo DefSpec Alpha` and so on (digit-free on purpose, see Hockey).
 Deliberately incomplete athletes (no force plate, no strength tests, almost nothing) exercise the missing-data paths.
 
 **Other files that know about Demo Mode** (the only ones):

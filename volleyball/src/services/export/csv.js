@@ -12,8 +12,10 @@ const requestAnimationFrame=context.requestAnimationFrame;
 // Reference: originals/volleyball.html:1327
 function doExport(){
   const keys=['name','pos','yr','age','approachJump','cmjHeight','standVert','sprint10','peakPower','rsi','asymmetry','eccRFD','concImpulse','eccImpulse','contractionTime','jumpVol','avgJumpHt','playerLoad','acuteLoad','chronicLoad','acwr','composite','tier'];
+  // Blank for missing/non-finite numbers (never "NaN"); quote cells containing a comma, quote or newline.
+  const cell=v=>{if(v==null||(typeof v==='number'&&!Number.isFinite(v)))return '';const s=String(v);return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
   const rows=[keys,...context.api.rosterAthletes().map(a=>keys.map(k=>a[k]))];
-  const a2=document.createElement('a');a2.href='data:text/csv,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));a2.download='bgsu-vb-sc.csv';a2.click();
+  const a2=document.createElement('a');a2.href='data:text/csv,'+encodeURIComponent(rows.map(r=>r.map(cell).join(',')).join('\n'));a2.download='bgsu-vb-sc.csv';a2.click();
 }
 
 return Object.defineProperties({}, {

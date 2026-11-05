@@ -45,7 +45,7 @@ function initJumping(){
 
   // Position jump radar
   context.api.kc('pos-jump-radar');
-  const posAvg=(pos,k)=>{const g=context.api.rosterAthletes().filter(a=>a.pos===pos);return parseFloat((g.reduce((s,a)=>s+a[k],0)/Math.max(1,g.length)).toFixed(1));};
+  const posAvg=(pos,k)=>{const g=context.api.rosterAthletes().filter(a=>a.pos===pos);const have=g.map(a=>a[k]).filter(v=>typeof v==='number'&&Number.isFinite(v));return have.length?parseFloat((have.reduce((s,v)=>s+v,0)/have.length).toFixed(1)):null;};
   const posColors={OH:'#FE5000',MB:'#60A5FA',S:'#4ADE80',RS:'#FCD34D',OPP:'#C084FC',Lib:'#CDA077',DS:'#94A3B8'};
   context.api.CH['pos-jump-radar']=new Chart(document.getElementById('pos-jump-radar'),{
     type:'bar',

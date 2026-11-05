@@ -5,7 +5,7 @@ import {createServer} from 'vite';
 import {chromium} from 'playwright-core';
 
 const EXPECTED_FEATURES=12, PORT=5181, ORIGIN=`http://127.0.0.1:${PORT}`;
-const SPARSE=/(Forward 07|Defense 05|Goalie 01|Goalie 02)/;
+const SPARSE=/(Forward Golf|Defense Echo|Goalie Alpha|Goalie Bravo)/;
 const server=await createServer({server:{port:PORT,strictPort:true,host:'127.0.0.1',hmr:false,watch:null}});
 let browser;
 try{

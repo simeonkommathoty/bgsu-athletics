@@ -194,7 +194,9 @@ function renderWLHistory(){
   const kSessions=context.api.getKinexonSessions();
   const allDates=[...new Set(Object.values(kSessions).flat().map(s=>s.test_date))].sort();
   if(!allDates.length){
-    document.getElementById('wl-focus-label').textContent='No Kinexon session data yet.';
+    // #wl-focus-label is not in the page template, so fall back to the calendar label instead of throwing.
+    const emptyLbl=document.getElementById('wl-focus-label')||document.getElementById('wl-cal-label');
+    if(emptyLbl) emptyLbl.textContent='No Kinexon session data yet.';
     return;
   }
 

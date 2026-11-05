@@ -12,6 +12,9 @@ const ROSTER=[
   ['D',0.76,'Sr'],['D',0.60,'Jr'],['D',0.52,'So'],['D',0.42,'Fr'],['D',0.34,'Fr'],
   ['G',0.66,'Jr'],['G',0.45,'So'],
 ];
+// Names carry NO digits: the app's own identity normalisation (normName) strips digits, so
+// "Demo Forward 01" and "Demo Forward 02" would be merged into one athlete by dedupe.
+const SUFFIX=['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot','Golf'];
 const WORD={F:'Forward',D:'Defense',G:'Goalie'};
 // Intentionally incomplete records (indexes into ROSTER) for missing-data handling.
 const NO_FORCE_PLATE=new Set([6,11]);   // no VALD sessions or force-plate fields
@@ -26,7 +29,7 @@ export function buildDemoTables(today=new Date()) {
   const counts={F:0,D:0,G:0};
   ROSTER.forEach(([pos,q0,yr],i)=>{
     const n=++counts[pos];
-    const name=`Demo ${WORD[pos]} ${String(n).padStart(2,'0')}`;
+    const name=`Demo ${WORD[pos]} ${SUFFIX[n-1]}`;
     const q=q0;const j=(spread=0.08)=>q+(rnd()-0.5)*spread*2;
     const cl=v=>Math.min(1,Math.max(0,v));
     const latest=iso(today,4+i%5);

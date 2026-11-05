@@ -15,6 +15,9 @@ const ROSTER=[
   ['Lib',0.68,'Jr'],['Lib',0.44,'Fr'],
   ['DS',0.56,'So'],['DS',0.36,'Fr'],
 ];
+// Names carry NO digits: the app's own identity normalisation (normName) strips digits, so
+// "Demo Forward 01" and "Demo Forward 02" would be merged into one athlete by dedupe.
+const SUFFIX=['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot','Golf'];
 const WORD={OH:'Outside',MB:'Middle',S:'Setter',RS:'RightSide',OPP:'Opposite',Lib:'Libero',DS:'DefSpec'};
 // Position ranges inside the sport's own NORMS (cm/in as the app uses them).
 const RANGE={
@@ -33,7 +36,7 @@ export function buildDemoTables(today=new Date()) {
   const counts={};
   ROSTER.forEach(([pos,q,yr],i)=>{
     const n=counts[pos]=(counts[pos]||0)+1;
-    const name=`Demo ${WORD[pos]} ${String(n).padStart(2,'0')}`;
+    const name=`Demo ${WORD[pos]} ${SUFFIX[n-1]}`;
     const cl=v=>Math.min(1,Math.max(0,v));
     const j=(spread=0.08)=>cl(q+(rnd()-0.5)*spread*2);
     const latest=iso(today,5+i%5);

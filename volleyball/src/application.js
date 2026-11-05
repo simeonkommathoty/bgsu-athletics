@@ -18,7 +18,7 @@ const context=createServices({
   document:serviceDocument(document), window, Chart, supabase,
   config:config||(demoRequested?{}:{supabaseUrl:import.meta.env.VITE_SUPABASE_URL,supabaseKey:import.meta.env.VITE_SUPABASE_ANON_KEY,
     nicknameAliases:JSON.parse(import.meta.env.VITE_VOLLEYBALL_NICKNAME_ALIASES||'{}'),formerPlayers:JSON.parse(import.meta.env.VITE_VOLLEYBALL_FORMER_PLAYERS||'[]')}),
-  navigate:layout.navigate, refreshFeature:layout.refreshFeature, report:layout.report,
+  navigate:layout.navigate, activeFeature:()=>layout.activeId, refreshFeature:layout.refreshFeature, report:layout.report,
   setTimeout:window.setTimeout.bind(window),clearTimeout:window.clearTimeout.bind(window),requestAnimationFrame:window.requestAnimationFrame.bind(window),
 });
 const controller=new AbortController();
