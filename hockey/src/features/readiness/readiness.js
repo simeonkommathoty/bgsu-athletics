@@ -23,7 +23,7 @@ function populateReadinessDates(){
   const sel=document.getElementById('readiness-date');
   if(!sel) return [];
   const byDate={};
-  context.api.SESSIONS.filter(context.api.isValdSession).forEach(s=>{
+  context.api.SESSIONS.filter(context.api.isValdSession).filter(s=>context.api.isValidTestDate(s.test_date)).forEach(s=>{
     (byDate[s.test_date]=byDate[s.test_date]||new Set()).add(context.api.nameKey(s.athlete_name));
   });
   const dates=Object.keys(byDate).sort().reverse();

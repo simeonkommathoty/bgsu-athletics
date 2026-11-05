@@ -286,6 +286,9 @@ function addUnmatched(){
 // Reference: originals/hockey.html:3972
 function openImport(){
   document.getElementById('imp-overlay').style.display='block';
+  // Real sessions keep the wording in import.html. Demo Mode is synthetic and in-memory only.
+  const saveNote=document.getElementById('imp-save-note');
+  if(saveNote&&context.api.demoMode) saveNote.textContent='DEMO MODE — synthetic data only. Imported changes are temporary: they exist only in this browser tab, are cleared when you reload or exit the demo, and never affect production data.';
   document.body.style.overflow='hidden';
   updateSrcInfo();
   setDZState('idle');

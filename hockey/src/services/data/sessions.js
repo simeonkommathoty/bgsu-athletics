@@ -37,7 +37,15 @@ async function loadAllSessions(){
   try{
     const {data, error} = await fetchAllRows('test_sessions','test_date',false);
     if(error) throw error;
-    SESSIONS = data||[];
+    // Sessions without a valid test_date cannot be placed in time, so they are excluded from every
+    // date-based view instead of being repaired or crashing the app. Never silent: warn and toast.
+    const rows=data||[];
+    SESSIONS = rows.filter(s=>context.api.isValidTestDate(s.test_date));
+    const skipped=rows.length-SESSIONS.length;
+    if(skipped){
+      console.warn(`Skipped ${skipped} session(s) with a missing or invalid test_date:`,rows.filter(s=>!context.api.isValidTestDate(s.test_date)).map(s=>s.id));
+      context.api.toast?.(`⚠ ${skipped} session${skipped===1?'':'s'} with an invalid date ${skipped===1?'was':'were'} skipped`);
+    }
   } catch(e){
     console.error('Load sessions failed:',e);
     SESSIONS = [];

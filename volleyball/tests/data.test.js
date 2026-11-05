@@ -40,7 +40,7 @@ test('session reads are gated by both client and authenticated user',async()=>{
 });
 test('paginated session reads preserve the original 1000-row boundary',async()=>{
   const {api}=services();const ranges=[];
-  api.sb={from:()=>({select:()=>({order(){return this;},async range(from,to){ranges.push([from,to]);return {data:Array.from({length:from===0?1000:2},(_,i)=>({id:from+i})),error:null};}})})};
+  api.sb={from:()=>({select:()=>({order(){return this;},async range(from,to){ranges.push([from,to]);return {data:Array.from({length:from===0?1000:2},(_,i)=>({id:from+i,test_date:'2026-03-01'})),error:null};}})})};
   api.currentUser={id:'synthetic-coach'};
   await api.loadAllSessions();
   assert.equal(api.SESSIONS.length,1002);assert.deepEqual(ranges,[[0,999],[1000,1999]]);

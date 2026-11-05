@@ -75,6 +75,19 @@ function sessionsForAthlete(athleteName){
   return _sessIdx.get(context.api.nameKey(athleteName))||[];
 }
 
+// A usable test date is a real calendar date written YYYY-MM-DD (an ISO time suffix is tolerated),
+// the format the database stores and the rest of the app compares as a string. null, missing,
+// non-string, malformed (e.g. "not-a-date"), impossible (2026-02-30, 2026-13-45) and implausible
+// (before 2000 / after 2100) values are rejected. Callers must NOT repair a rejected date.
+function isValidTestDate(value){
+  if(typeof value!=='string') return false;
+  const m=/^(\d{4})-(\d{2})-(\d{2})(?:[T ]|$)/.exec(value);
+  if(!m) return false;
+  const year=+m[1], month=+m[2], day=+m[3];
+  if(year<2000||year>2100||month<1||month>12||day<1) return false;
+  return day<=new Date(Date.UTC(year,month,0)).getUTCDate(); // days in that month
+}
+
 // Check if a single value is an outlier for a given metric on a given athlete
 // Reference: originals/hockey.html:2422
 function isOutlier(metric, value, athleteName, refDate){
@@ -106,10 +119,13 @@ function _isOutlierUncached(metric, value, athleteRows, refDate){
   // issue) would permanently drag the "expected" average down, so any
   // number of genuinely correct NEW values would keep getting flagged as
   // outliers forever, no matter how much new correct data came in.
+  // A malformed refDate cannot define a 60-day window. Skip only the rolling check (the hard range
+  // check above still applies) rather than guessing a date or throwing.
+  if(refDate&&!isValidTestDate(refDate)) return false;
   const cutoff=refDate?new Date(new Date(refDate).getTime()-60*24*60*60*1000).toISOString().slice(0,10):null;
   const otherSessions=athleteRows.filter(s=>
     s[metric]!==null && s[metric]!==undefined && !isNaN(s[metric]) &&
-    (!cutoff || (s.test_date>cutoff && (!refDate||s.test_date<=refDate)))
+    (!cutoff || (isValidTestDate(s.test_date) && s.test_date>cutoff && (!refDate||s.test_date<=refDate)))
   );
   if(otherSessions.length>=MIN_SESSIONS_FOR_ROLLING){
     // Compute average of all OTHER sessions (excluding this value if it's in there)
@@ -127,6 +143,7 @@ function cleanValue(metric, value, athleteName){
 }
 
 return Object.defineProperties({}, {
+  isValidTestDate: {enumerable:true, configurable:true, get:()=>isValidTestDate},
   FP_METRIC_KEYS: {enumerable:true, configurable:true, get:()=>FP_METRIC_KEYS},
   FP_HARD_RANGES: {enumerable:true, configurable:true, get:()=>FP_HARD_RANGES},
   OUTLIER_PCT_THRESHOLD: {enumerable:true, configurable:true, get:()=>OUTLIER_PCT_THRESHOLD},

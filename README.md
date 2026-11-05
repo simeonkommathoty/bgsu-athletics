@@ -61,3 +61,12 @@ Each sport also has an **Explore Demo** button on its login screen that opens th
 - **Auth redirects (per Supabase project, Auth > URL Configuration):** Hockey: add `https://simeonkommathoty.github.io/bgsu-athletics/hockey/`; Volleyball: add `https://simeonkommathoty.github.io/bgsu-athletics/volleyball/`; set Site URL to the matching one. Live login on the hosted site has not been verified.
 - **Troubleshooting:** open the failed run in the Actions tab; the failing step names the cause (tests, build output, browser check). Blank page: check the Network tab for 404s on assets.
 - **Roll back:** `git revert <bad-commit>` and push (never force-push), or re-run an earlier successful workflow run from the Actions tab.
+
+## Navigation behavior (deliberately unchanged)
+
+Switching sidebar features does not change the URL. Refresh keeps Demo Mode (`#demo`) but returns to the dashboard; Back/Forward move between pages and between the demo and non-demo views, with no broken states (checked in a real browser). URL-based feature routing was evaluated and **not** added: the fragment is already used by Demo Mode and by Supabase's password-recovery/auth redirects (`#access_token=...`), so fragment routing would collide with both; a query-string router would touch the shared layout, the demo reload logic and the login flow in both independent apps. That is a routing rewrite, not a small isolated change. If it is wanted later, add `?feature=<id>` handling in each sport's `layout/layout.js` (`start` and `navigate`) and keep `#demo` exactly as is.
+
+## Data rules worth knowing
+
+- **Invalid test dates:** a session whose `test_date` is missing, malformed or impossible (e.g. `2026-13-45`) is skipped when sessions load, with a console warning and an on-screen notice. It is never repaired or guessed. `isValidTestDate` in each sport's `services/scoring/outliers.js` is the single definition; outlier checks ignore a malformed reference date instead of throwing (the hard range check still applies).
+- **Demo names have no digits on purpose:** the identity normalisation strips digits, so numbered names would be merged into one athlete.

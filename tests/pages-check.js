@@ -107,6 +107,25 @@ try{
       charts+=await page.evaluate(()=>[...document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('canvas')].filter(c=>c.width>0&&c.height>0).length);
     }
     assert.ok(charts>0,`${sport.id} charts render`);
+    // Cross-feature correctness: every leaderboard metric sorts monotonically, and a row opens that athlete's profile.
+    await page.locator('#feature-nav [data-feature="leaderboard"]').click();await page.waitForTimeout(500);
+    const chips=await page.evaluate(()=>[...document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('#metric-chips .chip')].map(c=>c.textContent.trim()).filter(t=>!/no data/i.test(t)));
+    let sortedChips=0;
+    for(const label of chips){
+      const col=await page.evaluate(l=>{const r=document.querySelector('[data-feature-root]').shadowRoot;[...r.querySelectorAll('#metric-chips .chip')].find(c=>c.textContent.trim()===l)?.click();
+        return [...r.querySelectorAll('#lb-tbody tr')].map(tr=>parseFloat((tr.children[3]?.innerText||'').split(',').join('').replace(/[^0-9.-]/g,' ').trim().split(' ')[0]));},label);
+      const v=col.filter(x=>!Number.isNaN(x));if(v.length<2)continue;
+      assert.ok(v.every((x,i)=>i===0||x>=v[i-1])||v.every((x,i)=>i===0||x<=v[i-1]),`${sport.id} leaderboard "${label}" is sorted: ${v.join(',')}`);sortedChips++;
+    }
+    assert.ok(sortedChips>=10,`${sport.id}: leaderboard metrics checked (${sortedChips})`);
+    for(const i of [0,3,7]){
+      await page.locator('#feature-nav [data-feature="leaderboard"]').click();await page.waitForTimeout(300);
+      const rowName=await page.evaluate(i=>{const tr=document.querySelector('[data-feature-root]').shadowRoot.querySelectorAll('#lb-tbody tr')[i];const n=tr.children[1].innerText.split(String.fromCharCode(10))[0].trim();tr.click();return n;},i);
+      await page.waitForFunction(()=>document.querySelector('#feature-nav .active')?.dataset.feature==='profile'&&document.querySelector('[data-feature-root]')?.shadowRoot?.querySelector('#profile-sel'),null,{timeout:8000});
+      await page.waitForTimeout(300);
+      const hero=await page.evaluate(()=>document.querySelector('[data-feature-root]').shadowRoot.querySelector('#prof-hero').innerText.toUpperCase());
+      assert.ok(hero.includes(rowName.toUpperCase()),`${sport.id}: leaderboard row "${rowName}" opened that athlete's profile`);
+    }
     // Back/Forward and Sports Home from inside the demo.
     await page.locator('#feature-nav [data-feature="roster"]').click();
     await page.goBack().catch(()=>{});

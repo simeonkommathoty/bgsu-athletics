@@ -32,7 +32,14 @@ async function loadAllSessions(){
       all=all.concat(data||[]);
       if(!data||data.length<PAGE) break;
     }
-    SESSIONS = all;
+    // Sessions without a valid test_date cannot be placed in time, so they are excluded from every
+    // date-based view instead of being repaired or crashing the app. Never silent: warn and toast.
+    SESSIONS = all.filter(s=>context.api.isValidTestDate(s.test_date));
+    const skipped=all.length-SESSIONS.length;
+    if(skipped){
+      console.warn(`Skipped ${skipped} session(s) with a missing or invalid test_date:`,all.filter(s=>!context.api.isValidTestDate(s.test_date)).map(s=>s.id));
+      context.api.toast?.(`⚠ ${skipped} session${skipped===1?'':'s'} with an invalid date ${skipped===1?'was':'were'} skipped`);
+    }
   } catch(e){
     console.error('Load sessions failed:',e);
     SESSIONS = [];
